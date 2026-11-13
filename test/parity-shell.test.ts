@@ -150,26 +150,26 @@ test("Header parity: empty chat renders single muted session · cwd header follo
 test("Statusline formatting: zero/unknown stats displays only model without false 0% or $0.00", () => {
   // 1. Zero/unknown stats: only model
   const zeroData: SignatureStatuslineData = {
-    model: "claude-3-5-sonnet",
+    model: "fixture-sonnet-35",
     contextUsage: { percent: 0 },
     totalTokens: 0,
     cost: 0,
   };
   const zeroStats = formatSignatureStatsLine(zeroData);
-  assert.equal(zeroStats, "claude-3-5-sonnet", "Zero stats must only show model label");
+  assert.equal(zeroStats, "fixture-sonnet-35", "Zero stats must only show model label");
   assert.ok(!zeroStats.includes("0%"), "Must not display 0%");
   assert.ok(!zeroStats.includes("$0.00"), "Must not display $0.00");
 
   // 2. Active stats with context %, tokens, and cost
   const activeData: SignatureStatuslineData = {
-    model: "claude-3-5-sonnet",
+    model: "fixture-sonnet-35",
     agent: "reviewer",
     contextUsage: { percent: 42.4 },
     totalTokens: 28400,
     cost: 0.12,
   };
   const activeStats = formatSignatureStatsLine(activeData);
-  assert.ok(activeStats.includes("claude-3-5-sonnet · @reviewer"), "Includes model and agent");
+  assert.ok(activeStats.includes("fixture-sonnet-35 · @reviewer"), "Includes model and agent");
   assert.ok(activeStats.includes("42%"), "Includes rounded context percentage");
   assert.ok(activeStats.includes("28.4k"), "Formats tokens with k suffix");
   assert.ok(activeStats.includes("$0.12"), "Includes cost");
@@ -206,7 +206,7 @@ test("Composer parity: CleanEditor renders rounded frame and integrated statusli
       mockEditorTheme,
       mockKeys,
       () => theme,
-      () => "claude-3-5-sonnet",
+      () => "fixture-sonnet-35",
       () => undefined,
       { framed: true },
     );
@@ -236,7 +236,7 @@ test("Composer parity: CleanEditor renders rounded frame and integrated statusli
     const statuslineRow = stripTerminalSequences(lines[lines.length - 2]!);
     assert.ok(statuslineRow.startsWith("│ "), "Statusline row must be framed on left with │ ");
     assert.ok(statuslineRow.endsWith(" │"), "Statusline row must be framed on right with  │");
-    assert.ok(statuslineRow.includes("claude-3-5-sonnet"), "Statusline row must contain model");
+    assert.ok(statuslineRow.includes("fixture-sonnet-35"), "Statusline row must contain model");
     assert.ok(statuslineRow.includes("↵ send"), "Statusline row must contain idle hints");
     assert.equal(visibleWidth(statuslineRow), width);
 
@@ -258,7 +258,7 @@ test("Cursor marker preservation: hardware cursor and visual positioning remain 
       mockEditorTheme,
       mockKeys,
       () => theme,
-      () => "claude-3-5-sonnet",
+      () => "fixture-sonnet-35",
       () => undefined,
       { framed: true },
     );
@@ -295,7 +295,7 @@ test("Autocomplete handling: dropdown renders below bottom border and mouse clic
       mockEditorTheme,
       mockKeys,
       () => theme,
-      () => "claude-3-5-sonnet",
+      () => "fixture-sonnet-35",
       () => undefined,
       { framed: true },
     );
@@ -370,11 +370,11 @@ test("Preset switching: preserves exact same editor instance, buffer, and cursor
   clean.refreshPresentation();
   assert.equal(clean.embedWorkingStatus, true, "embedWorkingStatus must be true under omt-signature");
 
-  // 2. Switch to codex-inspired: same instance, text preserved, embedWorkingStatus false
-  setActiveTheme("codex-inspired");
+  // 2. Switch to omt-clean: same instance, text preserved, embedWorkingStatus false
+  setActiveTheme("omt-clean");
   clean.refreshPresentation();
   assert.equal(clean.getText(), "persistent text buffer across presets");
-  assert.equal(clean.embedWorkingStatus, false, "embedWorkingStatus must be false under codex-inspired");
+  assert.equal(clean.embedWorkingStatus, false, "embedWorkingStatus must be false under omt-clean");
 
   // 3. Switch to native: same instance, text preserved, embedWorkingStatus false
   setActiveTheme("native");
@@ -419,12 +419,12 @@ test("Footer control: suppresses standalone footer under omt-signature via empty
   assert.ok(currentFooterComponent, "Footer component was mounted");
   assert.deepEqual(currentFooterComponent.render(80), [], "Standalone footer must be suppressed under omt-signature (0 lines)");
 
-  // 2. Switch to codex-inspired: standalone footer is restored and renders lines
-  setActiveTheme("codex-inspired");
+  // 2. Switch to omt-clean: standalone footer is restored and renders lines
+  setActiveTheme("omt-clean");
   control.applyTheme(mockCtx);
-  assert.ok(currentFooterComponent instanceof CleanFooterComponent, "Restored CleanFooterComponent on codex-inspired");
-  const codexLines = currentFooterComponent.render(80);
-  assert.ok(codexLines.length >= 1, "Codex footer must render visible line(s)");
+  assert.ok(currentFooterComponent instanceof CleanFooterComponent, "Restored CleanFooterComponent on omt-clean");
+  const cleanLines = currentFooterComponent.render(80);
+  assert.ok(cleanLines.length >= 1, "Clean footer must render visible line(s)");
 
   // 3. Switch to native: setFooter(undefined) called
   setActiveTheme("native");

@@ -2,8 +2,8 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { visibleWidth, stripTerminalSequences } from "@earendil-works/pi-tui";
 import {
-  CLAUDE_THEME_SCENES,
-  isClaudeThemeScene,
+  CURATED_SCENES,
+  isCuratedScene,
   renderProceduralScene,
   hash,
   glyph,
@@ -27,7 +27,7 @@ import {
 import { BUILTIN_SCENES, renderSceneViewport } from "../extensions/omt/features/backgrounds/scenes/index.ts";
 import { VALID_BACKGROUND_SCENES } from "../extensions/omt/core/config.ts";
 
-const ALL_11_CLAUDE_SCENES = [
+const ALL_11_EMBER_SCENES = [
   "moonlit",
   "cloud-drift",
   "honu-lagoon",
@@ -114,11 +114,11 @@ test("Selective readability veil preserves margins and respects floor", () => {
 });
 
 test("All 11 built-in procedural scenes exist, have distinct IDs and are registered in BUILTIN_SCENES", () => {
-  assert.equal(Object.keys(CLAUDE_THEME_SCENES).length, 11);
+  assert.equal(Object.keys(CURATED_SCENES).length, 11);
 
-  for (const id of ALL_11_CLAUDE_SCENES) {
-    assert.ok(isClaudeThemeScene(id), `${id} is recognized as built-in scene`);
-    const scene = CLAUDE_THEME_SCENES[id];
+  for (const id of ALL_11_EMBER_SCENES) {
+    assert.ok(isCuratedScene(id), `${id} is recognized as built-in scene`);
+    const scene = CURATED_SCENES[id];
     assert.ok(scene, `scene ${id} exists`);
     assert.equal(scene.id, id);
     assert.ok(scene.name.length > 0);
@@ -135,7 +135,7 @@ test("All 11 scenes render across widths (120, 80, 40, 20) and heights without o
   const widths = [120, 80, 40, 20];
   const heights = [24, 12, 6];
 
-  for (const id of ALL_11_CLAUDE_SCENES) {
+  for (const id of ALL_11_EMBER_SCENES) {
     for (const w of widths) {
       for (const h of heights) {
         const lines = renderProceduralScene(id, w, h, 1500, { width: w, height: h, timeMs: 1500 });
@@ -150,7 +150,7 @@ test("All 11 scenes render across widths (120, 80, 40, 20) and heights without o
 });
 
 test("Procedural scenes are 100% deterministic and advance predictably over time", () => {
-  for (const id of ALL_11_CLAUDE_SCENES) {
+  for (const id of ALL_11_EMBER_SCENES) {
     const frameAt1s = renderProceduralScene(id, 80, 20, 1000);
     const frameAt1sAgain = renderProceduralScene(id, 80, 20, 1000);
     assert.deepEqual(frameAt1s, frameAt1sAgain, `${id} is 100% deterministic at t=1000ms`);
@@ -162,7 +162,7 @@ test("Procedural scenes are 100% deterministic and advance predictably over time
 });
 
 test("Procedural scenes support tranquil static snapshots under reduced-motion mode", () => {
-  for (const id of ALL_11_CLAUDE_SCENES) {
+  for (const id of ALL_11_EMBER_SCENES) {
     const reduced1 = renderProceduralScene(id, 60, 15, 1000, { width: 60, height: 15, timeMs: 1000, reducedMotion: true });
     const reduced2 = renderProceduralScene(id, 60, 15, 8000, { width: 60, height: 15, timeMs: 8000, reducedMotion: true });
     // In reduced motion mode, t is clamped to 0 so all timestamps produce identical tranquil snapshot
@@ -171,7 +171,7 @@ test("Procedural scenes support tranquil static snapshots under reduced-motion m
 });
 
 test("Procedural scenes support plain ASCII fallback mode", () => {
-  for (const id of ALL_11_CLAUDE_SCENES) {
+  for (const id of ALL_11_EMBER_SCENES) {
     const lines = renderProceduralScene(id, 80, 20, 2500, { width: 80, height: 20, timeMs: 2500, asciiOnly: true });
     assert.equal(lines.length, 20);
     for (const line of lines) {
@@ -224,7 +224,7 @@ test("Scene-specific visual features and geometry: Star Voyage", () => {
 });
 
 test("renderSceneViewport integrates with all 11 built-in scenes and supports framing", () => {
-  for (const id of ALL_11_CLAUDE_SCENES) {
+  for (const id of ALL_11_EMBER_SCENES) {
     // Framing "bracket"
     const bracketed = renderSceneViewport({
       scene: id,

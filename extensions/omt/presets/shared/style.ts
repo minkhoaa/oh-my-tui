@@ -1,20 +1,20 @@
 import type { Theme, ThemeColor } from "@earendil-works/pi-coding-agent";
 import { getActiveTheme } from "../../core/theme.ts";
 import type { ThemePreset } from "./types.ts";
-import { codexPanel } from "../codex-inspired/rendering.ts";
-import { openCodeBg } from "../opencode-inspired/rendering.ts";
+import { cleanPanel } from "../omt-clean/rendering.ts";
+import { railBg } from "../omt-rail/rendering.ts";
 import { accessibilityStore, asciiBorder } from "../../features/accessibility/model.ts";
 
-export function isCodexTheme(preset: ThemePreset = getActiveTheme()): boolean {
-  return preset.id === "codex-inspired" || (preset.id as string) === "codex";
+export function isCleanTheme(preset: ThemePreset = getActiveTheme()): boolean {
+  return preset.id === "omt-clean" || (preset.id as string) === "clean";
 }
 
-export function isClaudeTheme(preset: ThemePreset = getActiveTheme()): boolean {
-  return preset.id === "claude-code-inspired";
+export function isEmberTheme(preset: ThemePreset = getActiveTheme()): boolean {
+  return preset.id === "omt-ember";
 }
 
-export function isOpenCodeTheme(preset: ThemePreset = getActiveTheme()): boolean {
-  return preset.id === "opencode-inspired";
+export function isRailTheme(preset: ThemePreset = getActiveTheme()): boolean {
+  return preset.id === "omt-rail";
 }
 
 export function isSignatureTheme(preset: ThemePreset = getActiveTheme()): boolean {
@@ -43,8 +43,8 @@ export function quiet(theme: Theme, text: string): string {
 export function panel(theme: Theme, text: string): string {
   const active = getActiveTheme();
   if (!active.panelBg) return text;
-  if (isCodexTheme(active)) return codexPanel(theme, text);
-  if (isOpenCodeTheme(active)) return openCodeBg(theme, "element", text);
+  if (isCleanTheme(active)) return cleanPanel(theme, text);
+  if (isRailTheme(active)) return railBg(theme, "element", text);
   return theme.bg(active.color.panel, text);
 }
 

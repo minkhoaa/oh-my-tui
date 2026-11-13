@@ -261,9 +261,9 @@ test("formatComposerStatus: renders badges across preset aesthetics", () => {
   const metrics = calculateComposerMetrics("Sample text\nLine 2", 1, true);
 
   for (const preset of [
-    "codex-inspired",
-    "claude-code-inspired",
-    "opencode-inspired",
+    "omt-clean",
+    "omt-ember",
+    "omt-rail",
     "minimal",
     "native",
   ]) {
@@ -278,18 +278,18 @@ test("formatComposerStatus: adapts badges across terminal widths (120, 40, 20 co
   const metrics = calculateComposerMetrics("Sample text\nLine 2\nLine 3", 1, true);
 
   // Wide 120 cols
-  const wide = formatComposerStatus(metrics, theme, "codex-inspired", 120);
+  const wide = formatComposerStatus(metrics, theme, "omt-clean", 120);
   assert.match(wide, /\[MULTI 3L\]/);
   assert.match(wide, /\[STASH\]/);
   assert.ok(visibleWidth(wide) <= 120);
 
   // Medium 40 cols
-  const med = formatComposerStatus(metrics, theme, "codex-inspired", 40);
+  const med = formatComposerStatus(metrics, theme, "omt-clean", 40);
   assert.match(med, /\[3L\]/);
   assert.ok(visibleWidth(med) <= 40);
 
   // Narrow 20 cols
-  const narrow = formatComposerStatus(metrics, theme, "codex-inspired", 20);
+  const narrow = formatComposerStatus(metrics, theme, "omt-clean", 20);
   assert.ok(visibleWidth(narrow) <= 20);
 });
 

@@ -1,11 +1,11 @@
 import { type ToolRenderers, formatSize } from "@earendil-works/pi-coding-agent";
 import { truncateToWidth } from "@earendil-works/pi-tui";
 import { getActiveTheme } from "../../core/theme.ts";
-import { isCodexTheme, isOpenCodeTheme, isClaudeTheme, quiet } from "./style.ts";
+import { isCleanTheme, isRailTheme, isEmberTheme, quiet } from "./style.ts";
 import { formatDisplayPath, getTextContent, highlighted, resultState, textRow, header, expandHint, type CustomToolRendererOptions, OMT_TOOL_OWNER } from "./tool-helpers.ts";
-import { codexHeader, createCodexToolRenderer } from "../codex-inspired/tools.ts";
-import { createOpenCodeToolRenderer } from "../opencode-inspired/tools.ts";
-import { createClaudeToolRenderer } from "../claude-code-inspired/tools.ts";
+import { cleanHeader, createCleanToolRenderer } from "../omt-clean/tools.ts";
+import { createRailToolRenderer } from "../omt-rail/tools.ts";
+import { createEmberToolRenderer } from "../omt-ember/tools.ts";
 
 export function formatCustomCallDetail(rawArgs: unknown, cwd: string): string {
   if (!rawArgs || typeof rawArgs !== "object") return "";
@@ -51,21 +51,21 @@ export function formatCustomCallDetail(rawArgs: unknown, cwd: string): string {
 
 export function createCleanCustomToolRenderer(toolName = "custom", options: CustomToolRendererOptions = {}): ToolRenderers {
   const displayName = options.name ?? toolName;
-  const codex = createCodexToolRenderer(displayName);
-  const opencode = createOpenCodeToolRenderer(displayName);
-  const claude = createClaudeToolRenderer(displayName);
+  const clean = createCleanToolRenderer(displayName);
+  const rail = createRailToolRenderer(displayName);
+  const ember = createEmberToolRenderer(displayName);
 
   const renderer: ToolRenderers = {
     renderShell: "self",
     renderCall(raw, theme, context) {
       if (options.formatCallDetail) {
         const detail = options.formatCallDetail(raw as any, context.cwd);
-        if (isCodexTheme()) return codexHeader(displayName, detail, "", theme, context);
+        if (isCleanTheme()) return cleanHeader(displayName, detail, "", theme, context);
         return header(displayName, detail, "", theme, context);
       }
-      if (isCodexTheme()) return codex.renderCall!(raw, theme, context);
-      if (isOpenCodeTheme()) return opencode.renderCall!(raw, theme, context);
-      if (isClaudeTheme()) return claude.renderCall!(raw, theme, context);
+      if (isCleanTheme()) return clean.renderCall!(raw, theme, context);
+      if (isRailTheme()) return rail.renderCall!(raw, theme, context);
+      if (isEmberTheme()) return ember.renderCall!(raw, theme, context);
 
       const args = (raw ?? {}) as Record<string, unknown>;
       const detail = formatCustomCallDetail(args, context.cwd);
@@ -73,9 +73,9 @@ export function createCleanCustomToolRenderer(toolName = "custom", options: Cust
     },
     renderResult(result, renderOpts, theme, context) {
       if (!options.formatResultSummary && !options.formatExpandedContent) {
-        if (isCodexTheme()) return codex.renderResult!(result, renderOpts, theme, context);
-        if (isOpenCodeTheme()) return opencode.renderResult!(result, renderOpts, theme, context);
-        if (isClaudeTheme()) return claude.renderResult!(result, renderOpts, theme, context);
+        if (isCleanTheme()) return clean.renderResult!(result, renderOpts, theme, context);
+        if (isRailTheme()) return rail.renderResult!(result, renderOpts, theme, context);
+        if (isEmberTheme()) return ember.renderResult!(result, renderOpts, theme, context);
       }
 
       const active = getActiveTheme();

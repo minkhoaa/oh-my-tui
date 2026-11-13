@@ -17,7 +17,8 @@
     "extensions/omt/**/*.ts",
     "extensions/omt/backgrounds/catalog.json",
     "extensions/omt/backgrounds/*.rgba.gz",
-    "LICENSE"
+    "LICENSE",
+    "NOTICE"
   ],
   "engines": {
     "node": ">=22.19.0"

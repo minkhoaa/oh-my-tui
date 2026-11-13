@@ -18,9 +18,9 @@ export const DEFAULT_SHORTCUT_HELP_ENTRIES: ShortcutHelpEntry[] = [
   { key: "g / G", description: "Jump to top / bottom of scrollback transcript", category: "Navigation" },
 
   // Presets
-  { key: "/omt theme codex", description: "Switch to Codex-inspired preset", category: "Presets" },
-  { key: "/omt theme claude", description: "Switch to Claude Code-inspired preset", category: "Presets" },
-  { key: "/omt theme opencode", description: "Switch to OpenCode-inspired preset", category: "Presets" },
+  { key: "/omt theme clean", description: "Switch to OMT Clean preset", category: "Presets" },
+  { key: "/omt theme ember", description: "Switch to OMT Ember preset", category: "Presets" },
+  { key: "/omt theme rail", description: "Switch to OMT Rail preset", category: "Presets" },
   { key: "/omt theme minimal", description: "Switch to Minimal preset", category: "Presets" },
   { key: "/omt theme native", description: "Switch to Native Pi preset", category: "Presets" },
 

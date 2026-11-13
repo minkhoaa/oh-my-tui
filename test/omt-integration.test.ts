@@ -21,10 +21,10 @@ function theme() {
 const usage = { input: 1000, output: 10, cacheRead: 0, cacheWrite: 0, totalTokens: 1010, cost: { input: 0.03, output: 0, cacheRead: 0, cacheWrite: 0, total: 0.03 } };
 const assistant = { role: "assistant", api: "openai-completions", provider: "test", model: "offline", content: [], usage, stopReason: "stop", timestamp: 1 } as any;
 
-test("display accounting matches the real native footer across message, tool, warming and summary usage", () => {
+test("display accounting matches the real native footer across message, tool, embering and summary usage", () => {
   const sm = SessionManager.inMemory("/isolated");
   const entry = sm.appendMessage(assistant);
-  sm.appendUsage("cache_warm", "test", "offline", usage);
+  sm.appendUsage("cache_ember", "test", "offline", usage);
   sm.appendMessage({ role: "toolResult", toolCallId: "t", toolName: "subagent", content: [], isError: false, timestamp: 2, usage });
   sm.appendCompaction("summary", entry, 1000, undefined, false, usage);
   const totals = readDisplayUsage(sm.getEntries());
@@ -45,7 +45,7 @@ test("display accounting matches the real native footer across message, tool, wa
   } finally { resetActiveTheme(); }
 });
 
-test("footer usage cache notices append-only warming entries without a tool or message event", (t) => {
+test("footer usage cache notices append-only embering entries without a tool or message event", (t) => {
   const palette = theme();
   const sm = SessionManager.inMemory("/isolated");
   const scan = t.mock.method(sm, "getEntries");
@@ -68,8 +68,8 @@ test("footer usage cache notices append-only warming entries without a tool or m
     assert.equal(scan.mock.callCount(), 1, "animation frames reuse accounting");
     assert.deepEqual(cachedUsage, initialUsage);
 
-    // Native warming cache update invalidates leaf and updates cached stats
-    sm.appendUsage("cache_warm", "test", "offline", usage);
+    // Native embering cache update invalidates leaf and updates cached stats
+    sm.appendUsage("cache_ember", "test", "offline", usage);
     const updatedUsage = control.getUsage(ctx);
     assert.equal(scan.mock.callCount(), 2, "leaf movement invalidates without a lifecycle event");
     assert.equal(updatedUsage?.totalTokens, 1010);

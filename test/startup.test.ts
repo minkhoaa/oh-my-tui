@@ -6,7 +6,7 @@ import { KeybindingsManager, TUI_KEYBINDINGS, stripTerminalSequences, type TUI }
 import { createEditorControl, CleanEditor } from "../extensions/omt/features/editor/index.ts";
 import { getActiveTheme, resetActiveTheme, setActiveTheme } from "../extensions/omt/core/theme.ts";
 import { observeNativeUIOwnership, readNativeTerminalColors } from "../extensions/omt/core/native-ui.ts";
-import { setCodexPalette } from "../extensions/omt/presets/codex-inspired/rendering.ts";
+import { setCleanPalette } from "../extensions/omt/presets/omt-clean/rendering.ts";
 
 test("Pi 1.5.0 exposes extension UI only after the renderer starts (host boundary)", () => {
   // Check the real installed host, not a simulated ordering. A changed upstream
@@ -27,11 +27,11 @@ test("Pi 1.5.0 exposes extension UI only after the renderer starts (host boundar
   assert.doesNotMatch(entry, /setHeader|quietStartup|setTimeout|\.init\s*=/, "no header suppression, waits or init interception");
 });
 
-test("first Codex frame reuses confirmed native terminal replies without a second query", (t) => {
-  initTheme("dark"); setActiveTheme("codex-inspired");
+test("first Clean frame reuses confirmed native terminal replies without a second query", (t) => {
+  initTheme("dark"); setActiveTheme("omt-clean");
   const restore = observeNativeUIOwnership();
   assert.ok(restore);
-  t.after(() => { restore(); setCodexPalette({}); resetActiveTheme(); });
+  t.after(() => { restore(); setCleanPalette({}); resetActiveTheme(); });
   const foreground = { r: 221, g: 221, b: 221 }, background = { r: 16, g: 16, b: 16 };
   const controller = { waitForTerminalColors() {}, terminalColors: { foreground, background } };
   const host = { themeController: controller };
@@ -42,7 +42,7 @@ test("first Codex frame reuses confirmed native terminal replies without a secon
   assert.equal(background.r, 16, "read-only boundary does not leak mutable native state");
   let queries = 0;
   const tui = { terminal: { rows: 32, columns: 80 }, requestRender() {}, queryTerminalColors: async () => { queries++; return {}; } } as unknown as TUI;
-  setCodexPalette({});
+  setCleanPalette({});
   const editor = new CleanEditor(tui, { borderColor: (text) => text, selectList: getSelectListTheme() }, new KeybindingsManager(TUI_KEYBINDINGS) as PiKeys,
     () => ui.theme, () => "", () => readNativeTerminalColors(ui));
   assert.equal(queries, 0);
@@ -82,11 +82,11 @@ test("preset switches reuse the owned editor with native cursor, undo, paste and
   const text = owned.getText(), cursor = owned.getCursor();
   owned.setAutocompleteProvider({ getSuggestions: async () => ({ prefix: "/om", items: [{ value: "/omt", label: "/omt" }] }),
     applyCompletion: (_lines, line, _col, item) => ({ lines: [item.value], cursorLine: line, cursorCol: item.value.length }) });
-  for (const preset of ["opencode-inspired", "claude-code-inspired", "minimal", "codex-inspired"]) {
+  for (const preset of ["omt-rail", "omt-ember", "minimal", "omt-clean"]) {
     setActiveTheme(preset); control.applyTheme(ctx);
     assert.equal(current, owned); assert.equal(mounts, 1);
     assert.equal(owned.getText(), text); assert.deepEqual(owned.getCursor(), cursor);
-    assert.equal(owned.getPaddingX(), getActiveTheme().spacing.content, "padding contracts again after OpenCode");
+    assert.equal(owned.getPaddingX(), getActiveTheme().spacing.content, "padding contracts again after Rail");
     for (const width of [20, 40, 80, 120]) assert.ok(owned.render(width).every((row) => !stripTerminalSequences(row).includes("undefined")));
   }
   owned.handleInput("\x1f"); assert.ok(!owned.getText().includes("X"), "undo history survives switching");
@@ -94,9 +94,9 @@ test("preset switches reuse the owned editor with native cursor, undo, paste and
   await new Promise((resolve) => setTimeout(resolve, 30));
   const before = owned.render(80).slice(3).map(stripTerminalSequences);
   assert.ok(before.length > 0, "native completion is open");
-  setActiveTheme("claude"); control.applyTheme(ctx);
+  setActiveTheme("ember"); control.applyTheme(ctx);
   assert.deepEqual(owned.render(80).slice(3).map(stripTerminalSequences), before);
-  owned.setPaddingX(8); setActiveTheme("opencode"); control.applyTheme(ctx);
+  owned.setPaddingX(8); setActiveTheme("rail"); control.applyTheme(ctx);
   assert.equal(owned.getPaddingX(), 8, "larger configured native output padding wins");
   const foreign = () => new CustomEditor(tui, editorTheme, keys);
   factory = foreign; control.applyTheme(ctx);

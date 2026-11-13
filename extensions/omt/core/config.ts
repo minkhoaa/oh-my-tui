@@ -163,9 +163,9 @@ export const DEFAULT_CONFIG: Readonly<OmtConfig> = Object.freeze({
     playing: true,
     presetScenes: Object.freeze({
       "omt-signature": "matrix" as BackgroundScene,
-      "codex-inspired": "matrix" as BackgroundScene,
-      "claude-code-inspired": "aurora" as BackgroundScene,
-      "opencode-inspired": "rain" as BackgroundScene,
+      "omt-clean": "matrix" as BackgroundScene,
+      "omt-ember": "aurora" as BackgroundScene,
+      "omt-rail": "rain" as BackgroundScene,
       "minimal": "starfield" as BackgroundScene,
       "native": "aurora" as BackgroundScene,
     }),
@@ -572,7 +572,7 @@ export class ConfigStore {
   }
 
   /**
-   * Set a session-local override (e.g. from `/omt editor off` or `/omt theme opencode`).
+   * Set a session-local override (e.g. from `/omt editor off` or `/omt theme rail`).
    */
   setPresetOverride(preset: ThemeName | undefined): void {
     this.overrides.preset = preset;

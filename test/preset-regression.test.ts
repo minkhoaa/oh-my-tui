@@ -13,7 +13,7 @@ test("440 baseline ANSI cases retain provenance with 18 explicit layout correcti
   const corrections = JSON.parse(readFileSync(new URL("./fixtures/layout-corrections.json", import.meta.url), "utf8")).cases;
   assert.equal(Object.keys(corrections).length, 18);
   for (const [key, correction] of Object.entries(corrections) as [string, { before: string; after: string }][]) {
-    assert.match(key, /^(dark|light)\/opencode-inspired\/(10|20|40|80|120)\/(read|write)\/(true|false)$/);
+    assert.match(key, /^(dark|light)\/omt-rail\/(10|20|40|80|120)\/(read|write)\/(true|false)$/);
     assert.equal(expected[key], correction.before, "retain original snapshot provenance");
     expected[key] = correction.after;
   }

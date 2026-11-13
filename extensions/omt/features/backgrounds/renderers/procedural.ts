@@ -1,5 +1,5 @@
 import { formatCellBg, formatCellFg, formatCellFgBg, validCellViewport } from "./cell.ts";
-import { CLAUDE_THEME_SCENES } from "../scenes/curated.ts";
+import { CURATED_SCENES } from "../scenes/curated.ts";
 import { renderScaledWallpaper } from "../compositor/scale.ts";
 import { mixRgb, hexToRgb, keepVeil, glyph, haloOf, GLYPHS, LOOSE, type ProceduralRenderOptions } from "../scenes/art.ts";
 
@@ -20,7 +20,7 @@ export function renderProceduralScene(
   timeMs: number,
   options: ProceduralRenderOptions = { width, height, timeMs },
 ): string[] {
-  const scene = CLAUDE_THEME_SCENES[sceneId];
+  const scene = CURATED_SCENES[sceneId];
   if (!scene || !validCellViewport(width, height)) return [];
   if (options.textureScale !== undefined && options.textureScale !== 1) {
     return renderScaledWallpaper(width, height, options.textureScale, (cols, rows) =>

@@ -89,7 +89,7 @@ function dimSafe(theme: Theme | undefined, text: string): string {
 }
 
 /**
- * Format relative time ago matching Go pirpc.Ago (e.g. "just now", "5m ago", "2h ago", "3d ago", "Jan 02").
+ * Format relative time ago for session-list and detail views.
  */
 export function fmtAgo(d: number | Date | undefined): string {
   if (!d) return "—";
@@ -632,7 +632,7 @@ export class ResumeDialogComponent extends Container implements Component, Focus
     }
 
     // -------------------------------------------------------------------------
-    // Right column: Detail preview (Go sessionDetail)
+    // Right column: Session detail preview
     // -------------------------------------------------------------------------
     const sel = items[this.sessionCursor];
     const rightLines: string[] = [];
@@ -646,7 +646,7 @@ export class ResumeDialogComponent extends Container implements Component, Focus
         sel.id === this.options.currentSessionId ||
         sel.path === this.options.currentSessionPath;
 
-      // Construct detail text matching OMT Go sessionDetail:
+      // Construct the session detail text:
       // Line 1: Title
       // Line 2: N msgs · age · date
       // Line 3: shorten(Path)
@@ -809,11 +809,11 @@ export function createOmtResumeComponent(
 export const createResumeDialogComponent = createOmtResumeComponent;
 
 // -----------------------------------------------------------------------------
-// Go App & RPC Source Mappings
+// Session Dialog Helpers
 // -----------------------------------------------------------------------------
 
 /**
- * Maps to Go resumePickerMsg: formats parallel slices for picker options,
+ * Formats parallel arrays for picker options,
  * descriptions, paths, and right-column payloads.
  */
 export function resumePickerMsg(
@@ -852,7 +852,7 @@ export function resumePickerMsg(
 }
 
 /**
- * Maps to Go sessionDetail: generates multi-line string for the right-column preview.
+ * Generates the multi-line string for the right-column preview.
  */
 export function sessionDetail(s: ResumeSessionItem, current: string): string {
   const lines: string[] = [];
@@ -878,7 +878,7 @@ export function sessionDetail(s: ResumeSessionItem, current: string): string {
 }
 
 /**
- * Maps to Go resolveSessionArg: maps "/resume <arg>" to an existing session file.
+ * Resolves a "/resume <arg>" value to an existing session file.
  */
 export function resolveSessionArg(sessions: ResumeSessionItem[], arg: string): ResumeSessionItem | undefined {
   if (!arg) return undefined;

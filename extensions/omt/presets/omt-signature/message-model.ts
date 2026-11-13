@@ -10,7 +10,7 @@ import { signatureFg } from "./rendering.ts";
 
 /** Genuine settled-turn metadata observed from runtime events or turn completion. */
 export interface SettledTurnMetadata {
-  /** Model display name or identifier (e.g. "Claude 3.5 Sonnet", "gpt-4o"). */
+  /** Model display name or identifier. */
   model?: string;
   /** Model thinking level / effort (e.g. "xhigh", "high", "medium", "low"). */
   thinkingLevel?: string;

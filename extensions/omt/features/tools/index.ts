@@ -80,7 +80,7 @@ export function createToolsControl(pi: ExtensionAPI): ToolsControl {
           if (entry.type === "message") messages.push(entry.message);
           else if (entry.type === "custom_message") messages.push({ role: "custom", display: entry.display });
           else if (entry.type === "custom" || entry.type === "compaction" || entry.type === "branch_summary"
-            || (entry.type === "usage" && entry.kind === "cache_warm")) messages.push({ role: "custom", display: true });
+            || (entry.type === "usage" && entry.kind === "cache_ember")) messages.push({ role: "custom", display: true });
         }
         groups.seed(messages);
       } catch { groups.reset(); canGroup = false; }

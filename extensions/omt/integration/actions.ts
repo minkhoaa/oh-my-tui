@@ -16,25 +16,25 @@ export function buildPaletteActions(services: RuntimeServices & DialogOpeners, c
     return [
       // Presets
       {
-        id: "preset:codex-inspired",
-        title: "Switch to Codex Inspired",
-        description: "Activate Codex Inspired aesthetic preset",
+        id: "preset:omt-clean",
+        title: "Switch to OMT Clean",
+        description: "Activate OMT Clean aesthetic preset",
         category: "preset",
-        run: (c) => { applyTheme("codex-inspired", c); },
+        run: (c) => { applyTheme("omt-clean", c); },
       },
       {
-        id: "preset:claude-code-inspired",
-        title: "Switch to Claude Code Inspired",
-        description: "Activate Claude Code CLI inspired aesthetic preset",
+        id: "preset:omt-ember",
+        title: "Switch to OMT Ember",
+        description: "Activate OMT Ember presentation preset",
         category: "preset",
-        run: (c) => { applyTheme("claude-code-inspired", c); },
+        run: (c) => { applyTheme("omt-ember", c); },
       },
       {
-        id: "preset:opencode-inspired",
-        title: "Switch to OpenCode Inspired",
-        description: "Activate OpenCode inspired aesthetic preset",
+        id: "preset:omt-rail",
+        title: "Switch to OMT Rail",
+        description: "Activate OMT Rail presentation preset",
         category: "preset",
-        run: (c) => { applyTheme("opencode-inspired", c); },
+        run: (c) => { applyTheme("omt-rail", c); },
       },
       {
         id: "preset:minimal",

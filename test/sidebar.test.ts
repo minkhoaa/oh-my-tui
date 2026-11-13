@@ -215,7 +215,7 @@ test("renderSidebar produces exact 34-column outer box (30 inner width) matching
       filePath: "/home/user/project/session.json",
     },
     model: {
-      label: "claude-3-7-sonnet",
+      label: "fixture-sonnet-37",
       thinkLevel: "high",
       thinkLevels: ["off", "low", "medium", "high"],
     },
@@ -262,7 +262,7 @@ test("renderSidebar produces exact 34-column outer box (30 inner width) matching
       since: new Date(Date.now() - 12000),
     },
     recentModels: [
-      { id: "claude-3-7-sonnet", label: "Claude 3.7 Sonnet", isCurrent: true },
+      { id: "fixture-sonnet-37", label: "Fixture Sonnet 3.7", isCurrent: true },
       { id: "gpt-4o", label: "GPT-4o", isCurrent: false },
     ],
     commands: {
@@ -345,7 +345,7 @@ test("empty state contains no fake screenshot fixture values", () => {
   }
 
   // Must NOT contain hardcoded sample strings
-  assert.ok(!text.includes("claude-3-7-sonnet"), "Empty state must not contain fake model fixture");
+  assert.ok(!text.includes("fixture-sonnet-37"), "Empty state must not contain fake model fixture");
   assert.ok(!text.includes("45,000"), "Empty state must not contain fake token count");
   assert.ok(!text.includes("OAuth2"), "Empty state must not contain fake prompt");
   assert.ok(!text.includes("src/auth.ts"), "Empty state must not contain fake file diffs");

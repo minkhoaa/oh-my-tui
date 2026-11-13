@@ -62,7 +62,7 @@ class EmptyFooterComponent implements Component {
   invalidate(): void {}
 }
 
-/** Codex-inspired clean single-line footer component. */
+/** Clean single-line footer component. */
 export class CleanFooterComponent implements Component {
   readonly [OMT_FOOTER_OWNER] = true;
   private readonly tui: TUI;

@@ -1,75 +1,75 @@
 {
-  "reason": "OpenCode InlineToolRow fixed icon sibling and line_number gutter outside wrapped content; pinned packages/tui/src/routes/session/index.tsx lines 1849-1926 and 2051-2062. Historical M12 snapshots are unchanged. See README M13 audit and wrap PTYs.",
+  "reason": "Rail InlineToolRow fixed icon sibling and line_number gutter outside wrapped content; pinned packages/tui/src/routes/session/index.tsx lines 1849-1926 and 2051-2062. Historical M12 snapshots are unchanged. See README M13 audit and wrap PTYs.",
   "cases": {
-    "dark/opencode-inspired/10/read/false": {
+    "dark/omt-rail/10/read/false": {
       "before": "a9eadfd5a3e4ec50f7425984d40108f54725e438a2da52d16bb1d8d3c1494705",
       "after": "eab6f764cb9e66d1d0267e97499f2f18cde0a73a5b0ca0d36540d53fd640a6da"
     },
-    "dark/opencode-inspired/10/write/false": {
+    "dark/omt-rail/10/write/false": {
       "before": "ba45ae2fd657c3dc18cc2614bfcd82186b92da9dc0e10d5a7886bbbcd08d6622",
       "after": "350e9e1e519c2e102d119b72d469232c0f14bd845e2db48cd215ebe240844187"
     },
-    "dark/opencode-inspired/10/write/true": {
+    "dark/omt-rail/10/write/true": {
       "before": "ba45ae2fd657c3dc18cc2614bfcd82186b92da9dc0e10d5a7886bbbcd08d6622",
       "after": "350e9e1e519c2e102d119b72d469232c0f14bd845e2db48cd215ebe240844187"
     },
-    "dark/opencode-inspired/20/read/false": {
+    "dark/omt-rail/20/read/false": {
       "before": "245cf1f187d9d236a713a43b7bb29c373dacfcd8c78b7a49c10dc937023f844c",
       "after": "9b8d0c59140ea8db6de3e888eb21db1a88f39f2b36f03fb8de81b80b57fe9bf7"
     },
-    "dark/opencode-inspired/20/write/false": {
+    "dark/omt-rail/20/write/false": {
       "before": "b1f5635bb2e7bdc19d854448ae00d78d44f8e0b19e6b8653b1829f8068354cfb",
       "after": "16ea42accccd8410335e2675d458b07c5983c1fe9455c568cc8283f3a9c4fb3a"
     },
-    "dark/opencode-inspired/20/write/true": {
+    "dark/omt-rail/20/write/true": {
       "before": "b1f5635bb2e7bdc19d854448ae00d78d44f8e0b19e6b8653b1829f8068354cfb",
       "after": "16ea42accccd8410335e2675d458b07c5983c1fe9455c568cc8283f3a9c4fb3a"
     },
-    "dark/opencode-inspired/40/read/false": {
+    "dark/omt-rail/40/read/false": {
       "before": "9eb0a6b8218ca824740205cb7191577c6259b363f68d316fd243e3b5a54149fc",
       "after": "de4ab24b30d8117c5982443b6ff181bcff9cf2911ae299889826ca01f2e98500"
     },
-    "dark/opencode-inspired/80/read/false": {
+    "dark/omt-rail/80/read/false": {
       "before": "c05353d8988877989d08ebe997612c45d8ac2f006fd3066e33bb8e44424c9c0f",
       "after": "c441b188345b46116474e8937da61a0fedaa93a1dcb4ed83dcfa20ddbd6444ab"
     },
-    "dark/opencode-inspired/120/read/false": {
+    "dark/omt-rail/120/read/false": {
       "before": "c05353d8988877989d08ebe997612c45d8ac2f006fd3066e33bb8e44424c9c0f",
       "after": "c441b188345b46116474e8937da61a0fedaa93a1dcb4ed83dcfa20ddbd6444ab"
     },
-    "light/opencode-inspired/10/read/false": {
+    "light/omt-rail/10/read/false": {
       "before": "2ed92badcd744cb5e57838b8a2831fc0030d15c41ec5050fbcb9a0c8b98d5ac2",
       "after": "88f4bac83e0ce0b15dfae2e22598fb79a5b2811f19871d14b487275faa5279bb"
     },
-    "light/opencode-inspired/10/write/false": {
+    "light/omt-rail/10/write/false": {
       "before": "e2e5ff42217c191c1aa61acd18e0d4c1f214307a6685c8a5c9d4138b253602be",
       "after": "5974db8517f04c38976ac54162b5557af406f2c1b6736a5788720e94a08a0045"
     },
-    "light/opencode-inspired/10/write/true": {
+    "light/omt-rail/10/write/true": {
       "before": "e2e5ff42217c191c1aa61acd18e0d4c1f214307a6685c8a5c9d4138b253602be",
       "after": "5974db8517f04c38976ac54162b5557af406f2c1b6736a5788720e94a08a0045"
     },
-    "light/opencode-inspired/20/read/false": {
+    "light/omt-rail/20/read/false": {
       "before": "1d3f7181223bffba042be0fe70d6749013771e80e09c9cd482bf075727d9b340",
       "after": "4ae0f12cbcced5364425df1b6326bb02f8b45281766d99667cba5c7d37cc8ca4"
     },
-    "light/opencode-inspired/20/write/false": {
+    "light/omt-rail/20/write/false": {
       "before": "f41a367e516dfb79c2d8a3fd3d26d3356a41df9fbe443a4662b60b6c799db622",
       "after": "24900fa0659b9e56de0d8847df9f317c4b9e1d3e83f4dddbd1d836cb626b6d6d"
     },
-    "light/opencode-inspired/20/write/true": {
+    "light/omt-rail/20/write/true": {
       "before": "f41a367e516dfb79c2d8a3fd3d26d3356a41df9fbe443a4662b60b6c799db622",
       "after": "24900fa0659b9e56de0d8847df9f317c4b9e1d3e83f4dddbd1d836cb626b6d6d"
     },
-    "light/opencode-inspired/40/read/false": {
+    "light/omt-rail/40/read/false": {
       "before": "23d12812f78294f6e59f1c52bc700f5f5254993d24323a3937a608f79973395b",
       "after": "27aec6f8a2ef5b7a57e09e6587d8bc87e927a6afb3285f2705a76281b18b1a5e"
     },
-    "light/opencode-inspired/80/read/false": {
+    "light/omt-rail/80/read/false": {
       "before": "b4ace80f256305607b92edc29739206a25d52fb47d3e6b3e4d7663ba3fa06626",
       "after": "e226e21964014a2db64eafd468c211695748e44c00ac8da1b80fbc57531b5b67"
     },
-    "light/opencode-inspired/120/read/false": {
+    "light/omt-rail/120/read/false": {
       "before": "b4ace80f256305607b92edc29739206a25d52fb47d3e6b3e4d7663ba3fa06626",
       "after": "e226e21964014a2db64eafd468c211695748e44c00ac8da1b80fbc57531b5b67"
     }

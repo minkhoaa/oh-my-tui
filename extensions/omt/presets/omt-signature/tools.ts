@@ -193,7 +193,7 @@ function editFallback(args: Record<string, unknown>): string[] {
   return lines;
 }
 
-/** OMT-inspired compact tool row; native Pi still owns expansion and execution. */
+/** Compact tool row; native Pi still owns expansion and execution. */
 export function createSignatureToolRenderer(name: string): ToolRenderers {
   const toolName = formatToolName(name);
   const diffTool = name === "edit" || name === "write" || name === "multiedit";

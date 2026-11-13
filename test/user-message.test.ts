@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { getMarkdownTheme, initTheme, SessionManager, UserMessageComponent } from "@earendil-works/pi-coding-agent";
 import { stripTerminalSequences, visibleWidth } from "@earendil-works/pi-tui";
-import { setCodexPalette } from "../extensions/omt/presets/codex-inspired/rendering.ts";
+import { setCleanPalette } from "../extensions/omt/presets/omt-clean/rendering.ts";
 import { createUserMessageControl, OMT_USER_MESSAGE_OWNER } from "../extensions/omt/features/user-message/index.ts";
 import { setActiveTheme, resetActiveTheme } from "../extensions/omt/core/theme.ts";
 
@@ -12,7 +12,7 @@ test("native user rendering keeps Markdown, Unicode, theme and compact row count
   const examples = ["hello\nsecond line", "# Heading\n\n**bold** and *italic*\n\n- item one\n- item two", "```ts\nconst x = '你好';\n```", "👩🏽‍💻 你好 🇻🇳 e\u0301 ".repeat(25), "[image #1] a pasted attachment"];
   for (const palette of ["dark", "light", "system"]) {
     initTheme(palette);
-    setActiveTheme("codex-inspired");
+    setActiveTheme("omt-clean");
     const control = renderer();
     try {
       for (const text of examples) {
@@ -36,8 +36,8 @@ test("native user rendering keeps Markdown, Unicode, theme and compact row count
 
 test("one native row of vertical padding, shared content column and larger Pi outputPad", () => {
   initTheme("dark");
-  setActiveTheme("codex-inspired");
-  setCodexPalette({ background: { r: 0, g: 0, b: 0 } });
+  setActiveTheme("omt-clean");
+  setCleanPalette({ background: { r: 0, g: 0, b: 0 } });
   const control = renderer();
   try {
     for (const padding of [0, 1, 3, 5]) {
@@ -50,7 +50,7 @@ test("one native row of vertical padding, shared content column and larger Pi ou
       assert.equal(message.render(80).map(stripTerminalSequences)[1]!.indexOf("hello"), padding);
       control.on();
     }
-  } finally { control.cleanup?.(); setCodexPalette({}); resetActiveTheme(); }
+  } finally { control.cleanup?.(); setCleanPalette({}); resetActiveTheme(); }
 });
 
 test("narrow widths safely yield to native padding", () => {

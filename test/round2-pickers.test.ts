@@ -12,7 +12,7 @@
  * 8. Never report "Applied" when callback is absent, returns false, or is unresolved
  * 9. Async feedback race conditions and component lifetime disposal safety
  * 10. Native model registry invariance: ModelSpec objects are not mutated
- * 11. Thinking spec helper returns "on" (Go specification parity)
+ * 11. Thinking spec helper returns "on"
  */
 
 import assert from "node:assert/strict";
@@ -82,8 +82,8 @@ function createMockContext(overrides: Record<string, any> = {}) {
 
 const SAMPLE_MODELS: ModelSpec[] = [
   {
-    id: "claude-3-5-sonnet",
-    name: "Claude 3.5 Sonnet",
+    id: "fixture-sonnet-35",
+    name: "Fixture Sonnet 3.5",
     provider: "anthropic",
     providerLabel: "Anthropic",
     api: "anthropic-messages",
@@ -98,7 +98,7 @@ const SAMPLE_MODELS: ModelSpec[] = [
     inputModalities: ["text", "image"],
     keyStatus: "ready",
     isFavorite: true,
-    favoriteKey: "anthropic\0claude-3-5-sonnet",
+    favoriteKey: "anthropic\0fixture-sonnet-35",
   },
   {
     id: "gpt-4o",
@@ -309,7 +309,7 @@ test("round2 pickers: Model Picker Ctrl+F toggles favorite and cursor follows to
   let toggledState: boolean | undefined;
   const picker = new OmtModelPickerComponent(tui, theme, kb, () => {}, ctx, {
     models: SAMPLE_MODELS,
-    favoriteModelIds: ["anthropic\0claude-3-5-sonnet"],
+    favoriteModelIds: ["anthropic\0fixture-sonnet-35"],
     onSelectModel: () => {},
     onToggleFavorite: (key, state) => {
       toggledKey = key;
@@ -605,7 +605,7 @@ test("round2 pickers: Model Picker does NOT mutate native ModelSpec objects", ()
 });
 
 // =============================================================================
-// 7. Thinking spec helper returns 'on' (Go specification parity)
+// 7. Thinking spec helper returns 'on'
 // =============================================================================
 
 test("round2 pickers: modelThinking helper parity", () => {

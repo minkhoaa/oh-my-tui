@@ -87,7 +87,7 @@ test("omt-signature editor preserves native input geometry and status borders wi
       { borderColor: (s) => s, selectList: getSelectListTheme() },
       keys as PiKeys,
       () => theme,
-      () => "claude-3-5-sonnet",
+      () => "fixture-sonnet-35",
       () => undefined,
       { framed: true },
     );
@@ -116,7 +116,7 @@ test("omt-signature editor preserves native input geometry and status borders wi
     if (width >= 40) {
       assert.ok(stripped[4]!.includes("↵ send"), "statusline includes idle hint when space permits");
     }
-    assert.ok(stripped[4]!.includes("claude-3-5-sonn"), "statusline includes model label");
+    assert.ok(stripped[4]!.includes("fixture-sonnet"), "statusline includes model label");
     assert.ok(stripped[5]!.startsWith("╰"), "framed bottom border starts with ╰");
     assert.ok(stripped[5]!.endsWith("╯"), "framed bottom border ends with ╯");
 
@@ -310,7 +310,7 @@ test("CleanHeaderComponent renders compact visual identity without horizontal ov
       getSessionName: () => "feature-signature",
       getEntries: () => [{ type: "message", role: "user" }],
     },
-    model: { name: "Claude 3.5 Sonnet", id: "claude-3-5-sonnet" },
+    model: { name: "Fixture Sonnet 3.5", id: "fixture-sonnet-35" },
   } as any;
 
   const header = new CleanHeaderComponent(() => theme, () => populatedCtx);
@@ -350,11 +350,11 @@ test("CleanHeaderComponent renders compact visual identity without horizontal ov
     }
   }
 
-  // 3. Standard preset (codex-inspired): compact 1-2 lines with brand title
-  setActiveTheme("codex-inspired");
-  const codexHeader = new CleanHeaderComponent(() => theme, () => populatedCtx);
+  // 3. Standard preset (omt-clean): compact 1-2 lines with brand title
+  setActiveTheme("omt-clean");
+  const cleanHeader = new CleanHeaderComponent(() => theme, () => populatedCtx);
   for (const width of [120, 80, 60, 40, 20]) {
-    const lines = codexHeader.render(width);
+    const lines = cleanHeader.render(width);
     assert.ok(lines.length >= 1 && lines.length <= 2, "Standard header must be compact (1-2 lines)");
     for (const line of lines) {
       assert.ok(visibleWidth(line) <= width, `Header overflow at width ${width}: ${line}`);

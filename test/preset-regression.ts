@@ -13,14 +13,14 @@ const { CleanEditor } = await load(legacy ? "editor.ts" : "features/editor/index
 const { createUserMessageControl } = await load(legacy ? "user-message.ts" : "features/user-message/index.ts");
 const tools = await load(legacy ? "tools.ts" : "features/tools/index.ts");
 const { formatFooterLine } = await load(legacy ? "footer.ts" : "features/footer/index.ts");
-const { setCodexPalette } = await load(process.env.OMT_REGRESSION_SOURCE ? "codex.ts" : "presets/codex-inspired/rendering.ts");
-setCodexPalette({ foreground: { r: 238, g: 238, b: 238 }, background: { r: 10, g: 10, b: 10 } });
+const { setCleanPalette } = await load(process.env.OMT_REGRESSION_SOURCE ? "clean.ts" : "presets/omt-clean/rendering.ts");
+setCleanPalette({ foreground: { r: 238, g: 238, b: 238 }, background: { r: 10, g: 10, b: 10 } });
 const result: Record<string, string> = {};
 const hash = (key: string, value: unknown) => { result[key] = createHash("sha256").update(JSON.stringify(value)).digest("hex"); };
 for (const appearance of ["dark", "light"]) {
   initTheme(appearance);
   const theme = (InteractiveMode.prototype as any).createExtensionUIContext.call({}).theme;
-  for (const name of ["codex-inspired", "opencode-inspired", "minimal", "native"]) {
+  for (const name of ["omt-clean", "omt-rail", "minimal", "native"]) {
     design.setActiveTheme(name);
     const control = createUserMessageControl(() => theme);
     try {

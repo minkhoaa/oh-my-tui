@@ -775,7 +775,7 @@ export const BACKGROUNDS: readonly Background[] = [
   { name: "nightowl", dark: "#011627", light: "#011627" },
   { name: "nord", dark: "#2E3440", light: "#ECEFF4" },
   { name: "one-dark", dark: "#282c34", light: "#fafafa" },
-  { name: "opencode", dark: "#0a0a0a", light: "#ffffff" },
+  { name: "rail", dark: "#0a0a0a", light: "#ffffff" },
   { name: "osaka-jade", dark: "#111c18", light: "#F6F5DD" },
   { name: "palenight", dark: "#292d3e", light: "#fafafa" },
   { name: "rosepine", dark: "#191724", light: "#faf4ed" },

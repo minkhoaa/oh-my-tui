@@ -2,7 +2,7 @@ import type { BackgroundAssetStore, LoadedBackground } from "./assets/index.ts";
 import { backgroundFrameAt } from "./motion/index.ts";
 import { wallpaperCells } from "./compositor/index.ts";
 import { renderImageBackground, validCellViewport, type ImageCellRenderSettings } from "./renderers/cell.ts";
-import { isClaudeThemeScene, renderProceduralScene, renderSceneViewport, type PresetBackgroundPalette } from "./scenes/index.ts";
+import { isCuratedScene, renderProceduralScene, renderSceneViewport, type PresetBackgroundPalette } from "./scenes/index.ts";
 import type { ThemeName } from "../../presets/shared/types.ts";
 import type { ColorMode } from "./capabilities/index.ts";
 
@@ -10,7 +10,7 @@ import type { ColorMode } from "./capabilities/index.ts";
  * Checks whether an asset has animated motion.
  */
 export function managedBackgroundMoves(asset: LoadedBackground): boolean {
-  if (asset.metadata.alias && isClaudeThemeScene(asset.metadata.alias)) return true;
+  if (asset.metadata.alias && isCuratedScene(asset.metadata.alias)) return true;
   const scene = asset.metadata.scene;
   return scene
     ? scene.motion && scene.layers.some((layer) => layer.speed > 0 && layer.density > 0)
@@ -37,7 +37,7 @@ export function renderManagedBackground(
   const scene = asset.metadata.scene;
   if (!scene) {
     const alias = asset.metadata.alias;
-    if (alias && isClaudeThemeScene(alias)) {
+    if (alias && isCuratedScene(alias)) {
       return renderProceduralScene(alias, width, height, elapsed, {
         width,
         height,

@@ -241,8 +241,8 @@ test("extractEntrySummary extracts clean summaries across entry types", () => {
 
   // 5. Model change
   assert.equal(
-    extractEntrySummary({ type: "model_change", provider: "anthropic", modelId: "claude-3-5-sonnet" }),
-    "Model: anthropic/claude-3-5-sonnet",
+    extractEntrySummary({ type: "model_change", provider: "anthropic", modelId: "fixture-sonnet-35" }),
+    "Model: anthropic/fixture-sonnet-35",
   );
 
   // 6. Thinking level change

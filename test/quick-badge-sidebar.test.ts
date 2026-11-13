@@ -55,15 +55,15 @@ test("historical assistant message with only model (resumed session) does not em
   assert.equal(plainText[0], "● hello");
 });
 
-test("settled turn with genuine turn-completion metadata emits opencode-style badge", () => {
+test("settled turn with genuine turn-completion metadata emits rail-style badge", () => {
   const settledHost = {
     isStreaming: false,
     hasToolCalls: false,
-    lastMessage: { role: "assistant", model: "claude-3-5-sonnet" },
+    lastMessage: { role: "assistant", model: "fixture-sonnet-35" },
   };
 
   const metadata = {
-    model: "claude-3-5-sonnet",
+    model: "fixture-sonnet-35",
     thinkingLevel: "high",
     durationMs: 4200,
     settledAt: new Date("2026-11-12T14:30:00Z"),
@@ -75,7 +75,7 @@ test("settled turn with genuine turn-completion metadata emits opencode-style ba
   assert.ok(plainText.some((line) => line.includes("▣")));
   const footLine = plainText.find((line) => line.includes("▣"))!;
   assert.ok(footLine.startsWith("  ▣ "));
-  assert.ok(footLine.includes("claude-3-5-sonnet"));
+  assert.ok(footLine.includes("fixture-sonnet-35"));
   assert.ok(footLine.includes("high"));
   assert.ok(footLine.includes("4s"));
   assert.ok(footLine.includes("done "));
@@ -152,15 +152,15 @@ test("partial presentation metadata retains genuinely observed completion fields
 });
 
 test("streaming and intermediate tool calls suppress footer even with metadata", () => {
-  const metadata = { model: "claude-3-5", durationMs: 2000, settledAt: Date.now() };
+  const metadata = { model: "fixture-model-35", durationMs: 2000, settledAt: Date.now() };
 
   // Streaming suppresses footer
-  const streamingHost = { isStreaming: true, hasToolCalls: false, lastMessage: { model: "claude-3-5" } };
+  const streamingHost = { isStreaming: true, hasToolCalls: false, lastMessage: { model: "fixture-model-35" } };
   const streamingLines = signatureAssistant(["streaming text"], streamingHost as any, mockTheme, 80, { metadata });
   assert.ok(!plain(streamingLines).some((line) => line.includes("▣")));
 
   // Tool calls suppress footer
-  const toolHost = { isStreaming: false, hasToolCalls: true, lastMessage: { model: "claude-3-5" } };
+  const toolHost = { isStreaming: false, hasToolCalls: true, lastMessage: { model: "fixture-model-35" } };
   const toolLines = signatureAssistant(["tool call text"], toolHost as any, mockTheme, 80, { metadata });
   assert.ok(!plain(toolLines).some((line) => line.includes("▣")));
 });
@@ -200,7 +200,7 @@ test("sidebar empty-context renders 'left —' when context.percent is zero or u
 test("sidebar recent-model hint shows 'click to switch · ^↑↓ scroll' only when operations are wired", () => {
   const state = {
     recentModels: [
-      { id: "claude-3-5", label: "Claude 3.5 Sonnet", isCurrent: true },
+      { id: "fixture-model-35", label: "Fixture Sonnet 3.5", isCurrent: true },
       { id: "gpt-4o", label: "GPT-4o", isCurrent: false },
     ],
   };

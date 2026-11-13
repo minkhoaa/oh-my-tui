@@ -92,8 +92,8 @@ function createMockContext(overrides: Record<string, any> = {}) {
 
 const SAMPLE_MODELS = [
   {
-    id: "claude-3-5-sonnet",
-    name: "Claude 3.5 Sonnet",
+    id: "fixture-sonnet-35",
+    name: "Fixture Sonnet 3.5",
     provider: "anthropic",
     providerLabel: "Anthropic",
     api: "anthropic-messages",
@@ -376,8 +376,8 @@ test("Parity Model Picker: numeric badges (1-9) completely eliminated from rows"
   const rendered = picker.render(192).join("\n");
 
   // Must NOT have quick number prefix like "1 " or "1:"
-  assert.ok(!rendered.includes("1 claude-3-5-sonnet"), "Must NOT have numeric badge prefix");
-  assert.ok(!rendered.includes("1: claude-3-5-sonnet"), "Must NOT have numeric colon prefix");
+  assert.ok(!rendered.includes("1 fixture-sonnet-35"), "Must NOT have numeric badge prefix");
+  assert.ok(!rendered.includes("1: fixture-sonnet-35"), "Must NOT have numeric colon prefix");
   assert.ok(!rendered.includes("1-9 select"), "Must NOT have 1-9 select in footer hints");
 });
 
@@ -392,7 +392,7 @@ test("Parity Model Picker: spec details rows have NO colons and include Cache r/
     onSelectModel: () => {},
   });
 
-  // Switch to models column to focus claude-3-5-sonnet
+  // Switch to models column to focus fixture-sonnet-35
   picker.handleInput("\t");
   const rendered = picker.render(192).join("\n");
 

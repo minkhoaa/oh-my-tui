@@ -14,19 +14,19 @@ import { createFooterControl, formatFooterLine } from "../extensions/omt/feature
 import { hasNativeFooterRenderer, nativeToolRenderers, observeNativeUIOwnership, observeAssistantMessages, observeWorkingRender } from "../extensions/omt/core/native-ui.ts";
 import { THEME_NAMES } from "../extensions/omt/presets/index.ts";
 import { resetActiveTheme, setActiveTheme } from "../extensions/omt/core/theme.ts";
-import { codexPanel, setCodexPalette } from "../extensions/omt/presets/codex-inspired/rendering.ts";
+import { cleanPanel, setCleanPalette } from "../extensions/omt/presets/omt-clean/rendering.ts";
 
 const prototype = InteractiveMode.prototype as unknown as { createExtensionUIContext(this: unknown): { theme: Theme; getFooterComponent?(): unknown } };
 const tui = { terminal: { rows: 30, columns: 80 }, requestRender() {} } as TUI;
 
 // Deliberately exercise the installed host's actual UI-context implementation.
-test("Codex shares source-derived surfaces, gutters and compact framing across themes", () => {
-  setActiveTheme("codex-inspired");
+test("Clean shares source-derived surfaces, gutters and compact framing across themes", () => {
+  setActiveTheme("omt-clean");
   const control = createUserMessageControl();
   try {
     for (const palette of ["dark", "light", "system"]) {
       initTheme(palette);
-      setCodexPalette({ background: palette === "light" ? { r: 255, g: 255, b: 255 } : { r: 0, g: 0, b: 0 } });
+      setCleanPalette({ background: palette === "light" ? { r: 255, g: 255, b: 255 } : { r: 0, g: 0, b: 0 } });
       const theme = prototype.createExtensionUIContext.call({}).theme;
       const keys = new KeybindingsManager(TUI_KEYBINDINGS);
       const editor = new CleanEditor(tui, { borderColor: (s) => s, selectList: getSelectListTheme() }, keys as PiKeys, () => theme);
@@ -53,10 +53,10 @@ test("Codex shares source-derived surfaces, gutters and compact framing across t
             assert.equal(stripTerminalSequences(toolLines[2]!).indexOf("Read"), column + 2);
             const footer = formatFooterLine(width, theme, { outputPad: padding, branch: "main", extensionStatuses: [], modelId: "model" });
             assert.equal(stripTerminalSequences(footer).indexOf("model"), column);
-            const bg = codexPanel(theme, "surface").split("surface")[0]!;
+            const bg = cleanPanel(theme, "surface").split("surface")[0]!;
             if (bg) {
               assert.ok(editorLines[1]!.includes(bg));
-              assert.ok(messageLines[1]!.includes(codexPanel(theme, "surface", true).split("surface")[0]!));
+              assert.ok(messageLines[1]!.includes(cleanPanel(theme, "surface", true).split("surface")[0]!));
               assert.ok(!toolLines.join("").includes(bg), "tools stay transparent");
               assert.ok(!footer.includes(bg), "footer stays transparent");
             }
@@ -64,15 +64,15 @@ test("Codex shares source-derived surfaces, gutters and compact framing across t
         }
       }
     }
-  } finally { control.cleanup?.(); setCodexPalette({}); }
+  } finally { control.cleanup?.(); setCleanPalette({}); }
 });
 
-test("codex legacy alias and canonical ID render identical ANSI across every surface", () => {
+test("clean legacy alias and canonical ID render identical ANSI across every surface", () => {
   const control = createUserMessageControl();
   try {
     for (const palette of ["dark", "light", "system"]) {
       initTheme(palette);
-      setCodexPalette({ background: palette === "light" ? { r: 255, g: 255, b: 255 } : { r: 16, g: 16, b: 16 } });
+      setCleanPalette({ background: palette === "light" ? { r: 255, g: 255, b: 255 } : { r: 16, g: 16, b: 16 } });
       const theme = prototype.createExtensionUIContext.call({}).theme;
       const keys = new KeybindingsManager(TUI_KEYBINDINGS);
       for (const width of [10, 20, 40, 80, 120]) {
@@ -99,10 +99,10 @@ test("codex legacy alias and canonical ID render identical ANSI across every sur
             }),
             formatFooterLine(width, theme, { branch: "main", extensionStatuses: [], modelId: "model", reasoning: true, thinkingLevel: "high" })];
         };
-        assert.deepEqual(snapshot("codex"), snapshot("codex-inspired"), `${palette} width=${width}`);
+        assert.deepEqual(snapshot("clean"), snapshot("omt-clean"), `${palette} width=${width}`);
       }
     }
-  } finally { control.cleanup?.(); setCodexPalette({}); resetActiveTheme(); }
+  } finally { control.cleanup?.(); setCleanPalette({}); resetActiveTheme(); }
 });
 
 test("recognized host capabilities activate and footer ownership hook is reversible", () => {
@@ -215,7 +215,7 @@ test("public tool toggles preserve captured rows and restore subsequent rows", (
 });
 
 test("all presets adapt across dark, light, and system themes with proper transparency and alignment", () => {
-  setCodexPalette({});
+  setCleanPalette({});
   const control = createUserMessageControl();
   try {
     for (const palette of ["dark", "light", "system"]) {
@@ -244,10 +244,10 @@ test("all presets adapt across dark, light, and system themes with proper transp
 
           const bg = theme.bg("userMessageBg", "surface").split("surface")[0]!;
           if (bg && width >= 40) {
-            if (presetName === "codex-inspired") {
-              assert.equal(editorLines[1]!.includes("\x1b[48;"), false, "Codex is transparent without a reported terminal background");
-            } else if (presetName === "opencode-inspired") {
-              assert.ok(editorLines[1]!.includes("\x1b[48;"), "OpenCode has its own element panel");
+            if (presetName === "omt-clean") {
+              assert.equal(editorLines[1]!.includes("\x1b[48;"), false, "Clean is transparent without a reported terminal background");
+            } else if (presetName === "omt-rail") {
+              assert.ok(editorLines[1]!.includes("\x1b[48;"), "Rail has its own element panel");
               assert.equal(stripTerminalSequences(editorLines[1]!).indexOf("┃"), 2);
               assert.equal(stripTerminalSequences(messageLines[1]!).indexOf("preset check"), 5);
             } else if (presetName !== "native") {

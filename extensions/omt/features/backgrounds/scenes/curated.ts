@@ -472,7 +472,7 @@ function cabinPeak(x: number, cols: number, rows: number): number {
 export const snowCabinScene: ProceduralScene = {
   id: "snow-cabin",
   name: "Snow Cabin",
-  tagline: "Warm illuminated log cabin in a quiet winter pine forest",
+  tagline: "Ember illuminated log cabin in a quiet winter pine forest",
   cell: (x, y, cols, rows, t) => {
     const ground = cabinGroundAt(x, rows), ridge = Math.round(rows * CABIN_GROUND - cabinPeak(x, cols, rows));
     const fall = (v: number, odds: number, seed: number) => hash(x + Math.round(Math.sin(y * 0.3 + t * 0.5 + seed) * 1.5), Math.floor(y - t * v), seed) < odds;
@@ -851,7 +851,7 @@ export const honuLagoonScene: ProceduralScene = {
 };
 
 // All 11 curated procedural scenes
-export const CLAUDE_THEME_SCENES: Readonly<Record<string, ProceduralScene>> = Object.freeze({
+export const CURATED_SCENES: Readonly<Record<string, ProceduralScene>> = Object.freeze({
   moonlit: moonlitScene,
   "cloud-drift": cloudDriftScene,
   "honu-lagoon": honuLagoonScene,
@@ -865,7 +865,7 @@ export const CLAUDE_THEME_SCENES: Readonly<Record<string, ProceduralScene>> = Ob
   "star-voyage": starVoyageScene,
 });
 
-export function isClaudeThemeScene(id: string): boolean {
-  return Object.hasOwn(CLAUDE_THEME_SCENES, id);
+export function isCuratedScene(id: string): boolean {
+  return Object.hasOwn(CURATED_SCENES, id);
 }
 

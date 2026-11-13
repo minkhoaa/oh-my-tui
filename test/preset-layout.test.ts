@@ -3,7 +3,7 @@ import { test } from "node:test";
 import { InteractiveMode, initTheme } from "@earendil-works/pi-coding-agent";
 import type { ToolRenderContext } from "../extensions/omt/presets/shared/tool-helpers.ts";
 import { stripTerminalSequences, visibleWidth } from "@earendil-works/pi-tui";
-import { createOpenCodeToolRenderer } from "../extensions/omt/presets/opencode-inspired/tools.ts";
+import { createRailToolRenderer } from "../extensions/omt/presets/omt-rail/tools.ts";
 import { resetActiveTheme, setActiveTheme } from "../extensions/omt/core/theme.ts";
 
 function context(args: Record<string, unknown>): ToolRenderContext {
@@ -12,10 +12,10 @@ function context(args: Record<string, unknown>): ToolRenderContext {
     isPartial: false, isError: false, expanded: false, keyText: () => "ctrl+o", keyHint: () => "ctrl+o", invalidate() {} } as ToolRenderContext;
 }
 
-test("OpenCode fixed icon sibling matches the real pinned 40-column PTY continuation", (t) => {
-  initTheme("dark"); setActiveTheme("opencode"); t.after(resetActiveTheme);
+test("Rail fixed icon sibling matches the real pinned 40-column PTY continuation", (t) => {
+  initTheme("dark"); setActiveTheme("rail"); t.after(resetActiveTheme);
   const theme = (InteractiveMode.prototype as any).createExtensionUIContext.call({}).theme;
-  const renderer = createOpenCodeToolRenderer("read");
+  const renderer = createRailToolRenderer("read");
   const args = { path: "nested/long-directory/another-directory/hello.ts" };
   const row = renderer.renderCall!(args, theme, context(args));
   assert.deepEqual(row.render(40).map(stripTerminalSequences), [
@@ -29,10 +29,10 @@ test("OpenCode fixed icon sibling matches the real pinned 40-column PTY continua
   }
 });
 
-test("OpenCode line_number gutter stays outside wrapped code; all content and trailing rows survive", (t) => {
-  initTheme("dark"); setActiveTheme("opencode"); t.after(resetActiveTheme);
+test("Rail line_number gutter stays outside wrapped code; all content and trailing rows survive", (t) => {
+  initTheme("dark"); setActiveTheme("rail"); t.after(resetActiveTheme);
   const theme = (InteractiveMode.prototype as any).createExtensionUIContext.call({}).theme;
-  const renderer = createOpenCodeToolRenderer("write");
+  const renderer = createRailToolRenderer("write");
   const args = { path: "new.ts", content: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ你好\n" };
   const result = renderer.renderResult!({ content: [{ type: "text", text: "Written" }], details: undefined }, { expanded: true, isPartial: false }, theme, context(args));
   const rows = result.render(40).map(stripTerminalSequences);

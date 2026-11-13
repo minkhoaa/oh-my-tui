@@ -20,18 +20,18 @@ test("validateConfig handles valid, partial, corrupt, and legacy configurations 
   assert.deepEqual(validateConfig([]), DEFAULT_CONFIG);
 
   // Partial input merges with defaults
-  const partial = validateConfig({ preset: "claude-code-inspired" });
-  assert.equal(partial.preset, "claude-code-inspired");
+  const partial = validateConfig({ preset: "omt-ember" });
+  assert.equal(partial.preset, "omt-ember");
   assert.deepEqual(partial.components, DEFAULT_CONFIG.components);
   assert.deepEqual(partial.animation, DEFAULT_CONFIG.animation);
 
   // Legacy aliases resolve correctly
-  const aliasCodex = validateConfig({ preset: "codex" });
-  assert.equal(aliasCodex.preset, "codex-inspired");
-  const aliasClaude = validateConfig({ preset: "claude" });
-  assert.equal(aliasClaude.preset, "claude-code-inspired");
-  const aliasOpenCode = validateConfig({ preset: "opencode" });
-  assert.equal(aliasOpenCode.preset, "opencode-inspired");
+  const aliasClean = validateConfig({ preset: "clean" });
+  assert.equal(aliasClean.preset, "omt-clean");
+  const aliasEmber = validateConfig({ preset: "ember" });
+  assert.equal(aliasEmber.preset, "omt-ember");
+  const aliasRail = validateConfig({ preset: "rail" });
+  assert.equal(aliasRail.preset, "omt-rail");
 
   // Invalid values fall back to safe defaults
   const invalid = validateConfig({
@@ -57,7 +57,7 @@ test("loadConfig and saveConfig persist to disk and handle missing directories g
     // Saving valid config writes omt.json
     const updated = {
       ...DEFAULT_CONFIG,
-      preset: "opencode-inspired" as const,
+      preset: "omt-rail" as const,
       components: { ...DEFAULT_CONFIG.components, editor: false },
       animation: { mode: "subtle" as const, speed: 1.5, reducedMotion: "reduced" as const },
     };
@@ -88,11 +88,11 @@ test("ConfigStore acts as a single source of truth and distinguishes session ove
     assert.equal(store.hasAnyOverrides(), false);
 
     // Setting a session override changes effective config without modifying saved defaults
-    store.setPresetOverride("claude-code-inspired");
+    store.setPresetOverride("omt-ember");
     store.setComponentOverride("footer", false);
     store.setAnimationOverride("mode", "subtle");
 
-    assert.equal(store.getPreset(), "claude-code-inspired");
+    assert.equal(store.getPreset(), "omt-ember");
     assert.equal(store.isComponentEnabled("footer"), false);
     assert.equal(store.isComponentEnabled("editor"), true);
     assert.equal(store.getAnimation().mode, "subtle");

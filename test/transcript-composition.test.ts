@@ -183,7 +183,7 @@ test("raw thinking defaults to preview for every provider; click expands full ra
   const restore = observeAssistantMessages(() => enabled, () => theme); assert.ok(restore);
   const raw = "**Inspecting project**\n\n" + "detail ".repeat(80) + "TAIL_SENTINEL\x1b[2J";
   try {
-    for (const [provider, api] of [["openai-codex", "openai-codex-responses"], ["anthropic", "anthropic-messages"], ["google", "google-generative-ai"]]) {
+    for (const [provider, api] of [["openai", "openai-responses"], ["anthropic", "anthropic-messages"], ["google", "google-generative-ai"]]) {
       const input = { ...assistantFixture(), provider: provider!, api: api as any, content: [{ type: "thinking" as const, thinking: raw }, { type: "text" as const, text: "visible commentary" }] };
       const component = new AssistantMessageComponent(input, false, getMarkdownTheme(), "Reasoning", 1);
       let rows = plain(component.render(180));

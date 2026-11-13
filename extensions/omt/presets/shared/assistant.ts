@@ -2,14 +2,14 @@
 import type { AssistantMessageComponent, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, stripTerminalSequences, type MarkdownTheme, type TuiMouseEvent } from "@earendil-works/pi-tui";
 import { getActiveTheme } from "../../core/theme.ts";
-import { isCodexTheme, isOpenCodeTheme, isClaudeTheme, isSignatureTheme, contentPadding } from "./style.ts";
+import { isCleanTheme, isRailTheme, isEmberTheme, isSignatureTheme, contentPadding } from "./style.ts";
 import { signatureAssistant, startsPreformatted, type SignatureAssistantBlock } from "../omt-signature/assistant.ts";
 import { signatureThinkingLabel } from "../omt-signature/message-model.ts";
 import { signatureFg } from "../omt-signature/rendering.ts";
-import { codexAssistant } from "../codex-inspired/assistant.ts";
-import { openCodeAssistant } from "../opencode-inspired/assistant.ts";
-import { openCodeFg } from "../opencode-inspired/rendering.ts";
-import { claudeAssistant, claudeThinkingLabel } from "../claude-code-inspired/assistant.ts";
+import { cleanAssistant } from "../omt-clean/assistant.ts";
+import { railAssistant } from "../omt-rail/assistant.ts";
+import { railFg } from "../omt-rail/rendering.ts";
+import { emberAssistant, emberThinkingLabel } from "../omt-ember/assistant.ts";
 import type { AssistantHost } from "./types.ts";
 
 function extractThinkingRuns(message?: unknown): string[] {
@@ -44,10 +44,10 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
     const isEnabled = enabled();
     const activeTheme = getActiveTheme();
     const signature = isEnabled && width >= 10 && isSignatureTheme(activeTheme);
-    const codex = isEnabled && width >= 10 && isCodexTheme(activeTheme);
-    const opencode = isEnabled && width >= 10 && isOpenCodeTheme(activeTheme);
-    const claude = isEnabled && width >= 10 && isClaudeTheme(activeTheme);
-    const presentation = signature ? "signature" : codex ? "codex" : opencode ? "opencode" : claude ? "claude" : "native";
+    const clean = isEnabled && width >= 10 && isCleanTheme(activeTheme);
+    const rail = isEnabled && width >= 10 && isRailTheme(activeTheme);
+    const ember = isEnabled && width >= 10 && isEmberTheme(activeTheme);
+    const presentation = signature ? "signature" : clean ? "clean" : rail ? "rail" : ember ? "ember" : "native";
     const host = this as unknown as AssistantHost & { contentContainer?: { children?: Child[] } };
     const children = host.contentContainer?.children;
     mouseLayouts.delete(this);
@@ -72,17 +72,17 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       const thinkingContent = run === undefined ? "" : thinkingRuns[run] ?? "";
       const ownsThinking = run !== undefined && host.hiddenThinkingLabel === activeTheme.thinking.label;
       const ownsThinkingLabel = isCollapsedThinking && ownsThinking;
-      if ((opencode || claude) && ownsThinkingLabel) {
+      if ((rail || ember) && ownsThinkingLabel) {
         texts.push([child, child.text!]);
         const active = host.isStreaming && host.lastMessage?.content?.at(-1)?.type === "thinking";
         child.setText?.(
-          claude ? claudeThinkingLabel(palette(), !!active)
-          : openCodeFg(palette(), "warning", active ? "⋯ Thinking" : "+ Thought")
+          ember ? emberThinkingLabel(palette(), !!active)
+          : railFg(palette(), "warning", active ? "⋯ Thinking" : "+ Thought")
         );
       }
       // Keep one cell of Signature inset before the two-cell gutter. Set native
       // padding before wrapping, including thinking Text, and restore it afterwards.
-      const next = (signature || codex || opencode || claude) && typeof child.paddingX === "number"
+      const next = (signature || clean || rail || ember) && typeof child.paddingX === "number"
         ? (signature ? 1 : Math.min(contentPadding(child.paddingX), Math.floor((width - 2) / 2))) : child.paddingX;
       if (signature && ownsThinking && typeof child.render === "function") {
         // Pi's default expanded Markdown is not the reference default. Present raw
@@ -111,7 +111,7 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       // Normal working ticks reuse Pi's Markdown cache; only presentation transitions invalidate.
       if (previous?.presentation !== presentation || previous?.padding !== next) child.invalidate();
       layouts.set(child, { presentation, padding: next });
-      if ((signature || codex || opencode || claude) && child.theme && typeof child.theme.codeBlockBorder === "function") {
+      if ((signature || clean || rail || ember) && child.theme && typeof child.theme.codeBlockBorder === "function") {
         const native = child.theme;
         let styled = markdownThemes.get(native);
         if (!styled) {
@@ -161,15 +161,15 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       }
       const theme = palette();
       if (!theme) return lines;
-      if (opencode) return openCodeAssistant(lines, host, theme, width);
-      if (codex) return codexAssistant(lines, host, theme, width);
-      if (claude) {
+      if (rail) return railAssistant(lines, host, theme, width);
+      if (clean) return cleanAssistant(lines, host, theme, width);
+      if (ember) {
         let proseOffset = 0;
         for (const outer of children) {
           if (!outer.child && outer.theme) break;
           proseOffset += outer.render?.(width).length ?? 0;
         }
-        return claudeAssistant(lines, host, theme, proseOffset);
+        return emberAssistant(lines, host, theme, proseOffset);
       }
       return lines;
     } finally {

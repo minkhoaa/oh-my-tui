@@ -4,7 +4,7 @@ Modular presentation enhancements for [Pi](https://pi.dev), preserving native ag
 
 ## Features
 
-- **Visual presets**: `omt-signature` (default OMT presentation), `codex-inspired`, `claude-code-inspired`, `opencode-inspired`, `minimal`, and `native`.
+- **Visual presets**: `omt-signature` (default OMT presentation), `omt-clean`, `omt-ember`, `omt-rail`, `minimal`, and `native`.
 - **Component styling**: Startup header, composer, messages, tool output/diffs, statusline, and progress.
 - **Interactive views**: Settings hub, command palette, tool inspector, Git working tree explorer, session manager, conversation tree, and diagnostics.
 - **Right Dock & Agent Fleet**: Overview dashboard with pet status/animation, session tokens, MCP/LSP status, and live Subagent Fleet tracking.
@@ -36,7 +36,7 @@ Remove with `pi remove npm:oh-my-tui`.
 ```sh
 /omt settings              # Open settings hub
 /omt theme                 # Signature: open the hub's Theme section
-/omt theme <name> [save]   # Switch OMT preset (omt, codex, claude, opencode, minimal, native)
+/omt theme <name> [save]   # Switch OMT preset (omt, clean, ember, rail, minimal, native)
 /omt save                  # Persist current session overrides
 /omt on | off              # Enable/disable presentation components
 /omt <component> on | off  # editor, messages, tools, footer, thinking

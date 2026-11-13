@@ -90,7 +90,6 @@ const HEADING_RE = /^#{1,6}\s+/gm;
 /**
  * extractCodeBlocks pulls every ``` fence (with language) from markdown,
  * re-emitting the fence so the language tag survives copying.
- * Go: func extractCodeBlocks(markdown string) []string
  */
 export function extractCodeBlocks(markdown: string): string[] {
   if (!markdown) return [];
@@ -113,7 +112,6 @@ export function extractCodeBlocks(markdown: string): string[] {
  * isTableRowLine reports whether a line is a table row in either GFM form:
  * with outer pipes ("| a | b |") or without ("a | b"). Both are valid and
  * both render as a table, so the copy menu must offer them alike.
- * Go: func isTableRowLine(l string) bool
  */
 export function isTableRowLine(l: string): boolean {
   return l.trim().includes("|");
@@ -123,7 +121,6 @@ export function isTableRowLine(l: string): boolean {
  * extractTables pulls every markdown table (a cell row followed by a separator
  * row, then the remaining cell rows), preserving the raw pipe syntax so the
  * copied table is byte-for-byte what the author wrote — outer pipes or not.
- * Go: func extractTables(markdown string) []string
  */
 export function extractTables(markdown: string): string[] {
   if (!markdown) return [];
@@ -154,7 +151,6 @@ export function extractTables(markdown: string): string[] {
 /**
  * isTableLine reports whether a trimmed line is a markdown table row
  * (leading + trailing pipe with cells, or a separator row).
- * Go: func isTableLine(trimmed string) bool
  */
 export function isTableLine(trimmed: string): boolean {
   if (!trimmed.startsWith("|") || !trimmed.endsWith("|")) {
@@ -165,7 +161,6 @@ export function isTableLine(trimmed: string): boolean {
 
 /**
  * plainTableRow turns one | cell | row into "cell | cell".
- * Go: func plainTableRow(trimmed string) string
  */
 export function plainTableRow(trimmed: string): string {
   let row = trimmed.replace(/^\|/, "").replace(/\|$/, "");
@@ -176,7 +171,6 @@ export function plainTableRow(trimmed: string): string {
 /**
  * toPlainText strips fences (keeping code content), inline code ticks,
  * table pipes, emphasis and headings.
- * Go: func toPlainText(markdown string) string
  */
 export function toPlainText(markdown: string): string {
   if (!markdown) return "";
@@ -212,7 +206,6 @@ export function toPlainText(markdown: string): string {
 
 /**
  * plural returns "s" when count is not 1.
- * Go: func plural(n int) string
  */
 export function plural(n: number): string {
   return n === 1 ? "" : "s";
@@ -222,7 +215,6 @@ export function plural(n: number): string {
  * collectBlockContent derives semantic content for a chat Block. OMT
  * stores the raw markdown on Block.Text (assistant) / ToolResult (tool), so
  * reconstructMarkdown is one line here.
- * Go: func collectBlockContent(bl Block) BlockContent
  */
 export function collectBlockContent(bl: Block | string): BlockContent {
   if (typeof bl === "string") {
@@ -255,7 +247,6 @@ export function extractBlockContent(markdown: string): BlockContent {
 
 /**
  * buildBlockOptions lists only actions the block actually supports. Payload kinds run parallel.
- * Go: func buildBlockOptions(c BlockContent) ([]string, []string)
  */
 export function buildBlockOptions(c: BlockContent): BlockActionOption[] {
   const opts: BlockActionOption[] = [];
@@ -313,7 +304,6 @@ export interface BlockActionsDialogState {
 /**
  * newBlockActionsDialog builds the semantic copy menu for a chat block
  * (right-click entry). Reuses the modal Dialog machinery.
- * Go: func newBlockActionsDialog(blocks []Block, idx int) *Dialog
  */
 export function newBlockActionsDialog(
   blocks: Block[],
@@ -340,7 +330,6 @@ export function newBlockActionsDialog(
 
 /**
  * runBlockAction executes the picked action for a BlockActionsDialog
- * Go: func (m *Model) RunBlockAction(d *Dialog, ri int) tea.Cmd
  */
 export function runBlockAction(
   blocks: Block[],
@@ -380,7 +369,6 @@ export function runBlockAction(
 /**
  * copyLastAs copies the last assistant message as a specific semantic kind
  * (md | tables | code) — backing for the /copy-md|tables|code commands.
- * Go: func (m *Model) CopyLastAs(kind string) tea.Cmd
  */
 export function copyLastAs(
   blocks: Block[],

@@ -68,9 +68,9 @@ test("createDefaultPaletteActions generates all required default actions with pr
 
   // Check required presets
   const requiredPresets = [
-    "Switch to Codex Inspired",
-    "Switch to Claude Code Inspired",
-    "Switch to OpenCode Inspired",
+    "Switch to OMT Clean",
+    "Switch to OMT Ember",
+    "Switch to OMT Rail",
     "Switch to Minimal",
     "Switch to Native",
   ];
@@ -150,10 +150,10 @@ test("createDefaultPaletteActions execution modifies configStore and notifies us
   configStore.clearSessionOverrides();
 
   // Test preset action
-  const codexAction = actions.find((a) => a.id === "preset:codex-inspired")!;
-  codexAction.run(ctx);
-  assert.equal(configStore.getPreset(), "codex-inspired");
-  assert.ok(notifications.some((n) => n.message.includes("Codex Inspired")));
+  const cleanAction = actions.find((a) => a.id === "preset:omt-clean")!;
+  cleanAction.run(ctx);
+  assert.equal(configStore.getPreset(), "omt-clean");
+  assert.ok(notifications.some((n) => n.message.includes("OMT Clean")));
 
   // Test toggle component action
   notifications.length = 0;
@@ -193,9 +193,9 @@ test("filterPaletteActions matches title, description, and category accurately",
   assert.equal(filterPaletteActions(actions, "   ").length, actions.length);
 
   // Title match
-  const codexMatches = filterPaletteActions(actions, "Codex");
-  assert.ok(codexMatches.length >= 1);
-  assert.equal(codexMatches[0]?.title, "Switch to Codex Inspired");
+  const cleanMatches = filterPaletteActions(actions, "Clean");
+  assert.ok(cleanMatches.length >= 1);
+  assert.equal(cleanMatches[0]?.title, "Switch to OMT Clean");
 
   const minimalMatches = filterPaletteActions(actions, "Minimal");
   assert.ok(minimalMatches.length >= 1);
@@ -230,8 +230,8 @@ test("filterPaletteActions matches title, description, and category accurately",
   assert.equal(multiToken[0]?.title, "Switch to Minimal");
 
   // Fuzzy matching
-  const fuzzyCodex = filterPaletteActions(actions, "cdx");
-  assert.ok(fuzzyCodex.some((a) => a.title === "Switch to Codex Inspired"));
+  const fuzzyClean = filterPaletteActions(actions, "cln");
+  assert.ok(fuzzyClean.some((a) => a.title === "Switch to OMT Clean"));
 
   const fuzzyMinimal = filterPaletteActions(actions, "minml");
   assert.ok(fuzzyMinimal.some((a) => a.title === "Switch to Minimal"));

@@ -1,19 +1,19 @@
 import type { Theme, WorkingIndicatorOptions } from "@earendil-works/pi-coding-agent";
 import { getActiveTheme } from "../../core/theme.ts";
-import { isCodexTheme, isOpenCodeTheme, isClaudeTheme, isSignatureTheme } from "./style.ts";
-import { codexWorking } from "../codex-inspired/working.ts";
-import { openCodeWorking } from "../opencode-inspired/working.ts";
-import { CLAUDE_FRAME_MS, CLAUDE_FRAMES, claudeWorkingLine } from "../claude-code-inspired/working.ts";
+import { isCleanTheme, isRailTheme, isEmberTheme, isSignatureTheme } from "./style.ts";
+import { cleanWorking } from "../omt-clean/working.ts";
+import { railWorking } from "../omt-rail/working.ts";
+import { EMBER_FRAME_MS, EMBER_FRAMES, emberWorkingLine } from "../omt-ember/working.ts";
 import { signatureWorking } from "../omt-signature/working.ts";
 import { isAnimationActive, scaleElapsed, scaleInterval } from "../../core/motion.ts";
 
 export function hasAnimatedWorking(): boolean {
   if (!isAnimationActive()) return false;
-  return isCodexTheme() || isOpenCodeTheme() || isClaudeTheme() || isSignatureTheme();
+  return isCleanTheme() || isRailTheme() || isEmberTheme() || isSignatureTheme();
 }
 
 export function usesWorkingPhases(): boolean {
-  return isClaudeTheme() || isSignatureTheme() || !hasAnimatedWorking();
+  return isEmberTheme() || isSignatureTheme() || !hasAnimatedWorking();
 }
 
 export function workingIndicator(supported: boolean): WorkingIndicatorOptions {
@@ -26,22 +26,22 @@ export function workingIndicator(supported: boolean): WorkingIndicatorOptions {
       intervalMs: scaleInterval(signatureWorking.indicator.intervalMs),
     };
   }
-  if (supported && isOpenCodeTheme()) {
+  if (supported && isRailTheme()) {
     return {
-      frames: [...openCodeWorking.indicator.frames],
-      intervalMs: scaleInterval(openCodeWorking.indicator.intervalMs),
+      frames: [...railWorking.indicator.frames],
+      intervalMs: scaleInterval(railWorking.indicator.intervalMs),
     };
   }
-  if (supported && isCodexTheme()) {
+  if (supported && isCleanTheme()) {
     return {
-      frames: [...codexWorking.indicator.frames],
-      intervalMs: scaleInterval(codexWorking.indicator.intervalMs),
+      frames: [...cleanWorking.indicator.frames],
+      intervalMs: scaleInterval(cleanWorking.indicator.intervalMs),
     };
   }
-  if (supported && isClaudeTheme()) {
+  if (supported && isEmberTheme()) {
     return {
-      frames: [...CLAUDE_FRAMES],
-      intervalMs: scaleInterval(CLAUDE_FRAME_MS),
+      frames: [...EMBER_FRAMES],
+      intervalMs: scaleInterval(EMBER_FRAME_MS),
     };
   }
   return { frames: [getActiveTheme().thinking.indicator] };
@@ -51,8 +51,8 @@ export function workingLine(theme: Theme, elapsed: number, phase: string, key: s
   const animated = isAnimationActive();
   const scaled = scaleElapsed(elapsed);
   if (isSignatureTheme()) return signatureWorking.render(theme, scaled, phase, key, width);
-  if (isOpenCodeTheme()) return openCodeWorking.render(theme, scaled, key, width);
-  if (isCodexTheme()) return codexWorking.render(theme, scaled, key, width);
-  if (isClaudeTheme()) return claudeWorkingLine(theme, scaled, phase, key, width, animated);
+  if (isRailTheme()) return railWorking.render(theme, scaled, key, width);
+  if (isCleanTheme()) return cleanWorking.render(theme, scaled, key, width);
+  if (isEmberTheme()) return emberWorkingLine(theme, scaled, phase, key, width, animated);
   return undefined;
 }

@@ -121,7 +121,7 @@ test("Long-running session: 300 conversation turns remain bounded in memory with
   const heapBefore = process.memoryUsage().heapUsed;
 
   // Execute 300 simulated turns across multiple presets
-  const presets: ThemeName[] = ["codex-inspired", "opencode-inspired", "claude-code-inspired", "minimal", "native"];
+  const presets: ThemeName[] = ["omt-clean", "omt-rail", "omt-ember", "minimal", "native"];
   for (let turn = 0; turn < 300; turn++) {
     const preset = presets[turn % presets.length]!;
     setActiveTheme(preset);

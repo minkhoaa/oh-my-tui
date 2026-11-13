@@ -56,9 +56,9 @@ test("validateConfig handles valid, partial, corrupt, and legacy background conf
   assert.equal(initial.background.intensity, "medium");
   assert.equal(initial.background.dimming, "subtle");
   assert.equal(initial.background.pauseOnActivity, true);
-  assert.equal(initial.background.presetScenes?.["codex-inspired"], "matrix");
-  assert.equal(initial.background.presetScenes?.["claude-code-inspired"], "aurora");
-  assert.equal(initial.background.presetScenes?.["opencode-inspired"], "rain");
+  assert.equal(initial.background.presetScenes?.["omt-clean"], "matrix");
+  assert.equal(initial.background.presetScenes?.["omt-ember"], "aurora");
+  assert.equal(initial.background.presetScenes?.["omt-rail"], "rain");
   assert.equal(initial.background.presetScenes?.["minimal"], "starfield");
 
   // Valid background configuration
@@ -72,7 +72,7 @@ test("validateConfig handles valid, partial, corrupt, and legacy background conf
       dimming: "vibrant",
       pauseOnActivity: false,
       presetScenes: {
-        "codex-inspired": "particles",
+        "omt-clean": "particles",
       },
     },
   });
@@ -83,7 +83,7 @@ test("validateConfig handles valid, partial, corrupt, and legacy background conf
   assert.equal(valid.background.intensity, "high");
   assert.equal(valid.background.dimming, "vibrant");
   assert.equal(valid.background.pauseOnActivity, false);
-  assert.equal(valid.background.presetScenes?.["codex-inspired"], "particles");
+  assert.equal(valid.background.presetScenes?.["omt-clean"], "particles");
 
   // Invalid values fall back gracefully to safe defaults
   const invalid = validateConfig({
@@ -96,7 +96,7 @@ test("validateConfig handles valid, partial, corrupt, and legacy background conf
       dimming: "ultra-bright",
       pauseOnActivity: "never",
       presetScenes: {
-        "codex-inspired": "invalid-scene",
+        "omt-clean": "invalid-scene",
       },
     },
   });
@@ -114,7 +114,7 @@ test("ConfigStore manages background overrides, per-preset scenes, and defaults"
   store.init();
 
   assert.equal(store.isBackgroundEnabled(), false);
-  assert.equal(store.getEffectiveBackgroundScene(), "matrix"); // Codex default preset uses matrix
+  assert.equal(store.getEffectiveBackgroundScene(), "matrix"); // Clean default preset uses matrix
 
   // Enable background with scene mode
   store.setBackgroundOverride("enabled", true);
@@ -124,8 +124,8 @@ test("ConfigStore manages background overrides, per-preset scenes, and defaults"
   assert.equal(store.getBackground().mode, "scene");
 
   // Setting preset scene override
-  store.setPresetSceneOverride("claude-code-inspired", "particles");
-  store.setPresetOverride("claude-code-inspired");
+  store.setPresetSceneOverride("omt-ember", "particles");
+  store.setPresetOverride("omt-ember");
   assert.equal(store.getEffectiveBackgroundScene(), "particles");
 
   // Overrides detection
@@ -165,17 +165,17 @@ test("Color math, dimming factors, and ANSI formatting", () => {
 });
 
 test("Preset background palettes match milestone aesthetic guidelines", () => {
-  const codex = getPresetBackgroundPalette("codex-inspired");
-  assert.equal(codex.defaultScene, "matrix");
-  assert.deepEqual(codex.primary, [0, 255, 102]); // Cyber green
+  const clean = getPresetBackgroundPalette("omt-clean");
+  assert.equal(clean.defaultScene, "matrix");
+  assert.deepEqual(clean.primary, [0, 255, 102]); // Cyber green
 
-  const claude = getPresetBackgroundPalette("claude-code-inspired");
-  assert.equal(claude.defaultScene, "aurora");
-  assert.deepEqual(claude.primary, [215, 119, 87]); // Terracotta #d77757
+  const ember = getPresetBackgroundPalette("omt-ember");
+  assert.equal(ember.defaultScene, "aurora");
+  assert.deepEqual(ember.primary, [215, 119, 87]); // Terracotta #d77757
 
-  const opencode = getPresetBackgroundPalette("opencode-inspired");
-  assert.equal(opencode.defaultScene, "rain");
-  assert.deepEqual(opencode.primary, [0, 212, 255]); // Electric cyan
+  const rail = getPresetBackgroundPalette("omt-rail");
+  assert.equal(rail.defaultScene, "rain");
+  assert.deepEqual(rail.primary, [0, 212, 255]); // Electric cyan
 
   const minimal = getPresetBackgroundPalette("minimal");
   assert.equal(minimal.defaultScene, "starfield");
@@ -494,7 +494,7 @@ test("Matrix animation renders in designated region with framing and exact width
     },
   } as any;
 
-  setActiveTheme("codex-inspired");
+  setActiveTheme("omt-clean");
   const bgControl = createBackgroundControl();
   bgControl.on(mockContext);
   bgControl.setScene("matrix", mockContext);
@@ -514,7 +514,7 @@ test("Matrix animation renders in designated region with framing and exact width
       assert.ok(!line.includes("\n"), "Scene line must not contain embedded newlines");
       assert.ok(!line.includes("\r"), "Scene line must not contain carriage returns");
 
-      // Verify framing: bracket delimiters present for Codex preset on standard viewports
+      // Verify framing: bracket delimiters present for Clean preset on standard viewports
       if (width >= 40) {
         const stripped = stripTerminalSequences(line);
         assert.ok(stripped.startsWith("╎ ") || stripped.startsWith("| "), "Expected bracket prefix delimiter");

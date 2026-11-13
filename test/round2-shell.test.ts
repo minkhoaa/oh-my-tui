@@ -368,10 +368,10 @@ test("preset switching preserves editor instance, buffer, and cursor while contr
   assert.equal(clean.render(80).length, 3, "native preset renders 3 rows");
   assert.equal(clean.getText(), "Persistent buffer test", "Buffer preserved");
 
-  // 3. Switch to codex-inspired: padding becomes 2
-  setActiveTheme("codex-inspired");
+  // 3. Switch to omt-clean: padding becomes 2
+  setActiveTheme("omt-clean");
   clean.refreshPresentation();
-  assert.equal(clean.getPaddingX(), 2, "codex has padding 2");
+  assert.equal(clean.getPaddingX(), 2, "clean has padding 2");
   assert.equal(clean.getText(), "Persistent buffer test", "Buffer preserved");
 
   // 4. Switch back to omt-signature: padding restores to 4, renders 6 rows

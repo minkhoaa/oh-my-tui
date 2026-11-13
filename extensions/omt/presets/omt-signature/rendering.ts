@@ -60,7 +60,7 @@ export interface PaletteSpec {
 }
 
 /**
- * OMT Default Monochrome palette (opencode-like, subtle borders, dim text, no rainbow).
+ * OMT Default Monochrome palette (subtle borders and dim text).
  */
 export const OMT_DEFAULT_PALETTE: Record<SignatureColorRole, PaletteSpec> = {
   accent: { rgb: [255, 255, 255], ansi256: 15 },    // cAccent: ANSI 15 (white / bright white)

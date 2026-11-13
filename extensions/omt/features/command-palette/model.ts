@@ -58,41 +58,41 @@ export function createDefaultPaletteActions(
   const defaults: PaletteAction[] = [
     // Presets
     {
-      id: "preset:codex-inspired",
-      title: "Switch to Codex Inspired",
-      description: "Activate Codex Inspired aesthetic preset",
+      id: "preset:omt-clean",
+      title: "Switch to OMT Clean",
+      description: "Activate OMT Clean aesthetic preset",
       category: "preset",
       run: (runCtx) => {
-        configStore.setPresetOverride("codex-inspired");
+        configStore.setPresetOverride("omt-clean");
         const c = runCtx ?? ctx;
         if (c?.hasUI && c.ui?.notify) {
-          c.ui.notify("Switched to Codex Inspired preset", "info");
+          c.ui.notify("Switched to OMT Clean preset", "info");
         }
       },
     },
     {
-      id: "preset:claude-code-inspired",
-      title: "Switch to Claude Code Inspired",
-      description: "Activate Anthropic Claude Code inspired aesthetic preset",
+      id: "preset:omt-ember",
+      title: "Switch to OMT Ember",
+      description: "Activate OMT Ember presentation preset",
       category: "preset",
       run: (runCtx) => {
-        configStore.setPresetOverride("claude-code-inspired");
+        configStore.setPresetOverride("omt-ember");
         const c = runCtx ?? ctx;
         if (c?.hasUI && c.ui?.notify) {
-          c.ui.notify("Switched to Claude Code Inspired preset", "info");
+          c.ui.notify("Switched to OMT Ember preset", "info");
         }
       },
     },
     {
-      id: "preset:opencode-inspired",
-      title: "Switch to OpenCode Inspired",
-      description: "Activate OpenCode inspired aesthetic preset",
+      id: "preset:omt-rail",
+      title: "Switch to OMT Rail",
+      description: "Activate OMT Rail presentation preset",
       category: "preset",
       run: (runCtx) => {
-        configStore.setPresetOverride("opencode-inspired");
+        configStore.setPresetOverride("omt-rail");
         const c = runCtx ?? ctx;
         if (c?.hasUI && c.ui?.notify) {
-          c.ui.notify("Switched to OpenCode Inspired preset", "info");
+          c.ui.notify("Switched to OMT Rail preset", "info");
         }
       },
     },

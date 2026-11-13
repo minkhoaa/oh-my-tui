@@ -376,7 +376,7 @@ test("OmtNotificationHistoryComponent: renders notification history", () => {
   const notifs = [
     {
       id: "n1",
-      text: "model switched → claude-3-5-sonnet",
+      text: "model switched → fixture-sonnet-35",
       level: "info" as const,
       timestamp: Date.now() - 10 * 60 * 1000,
     },

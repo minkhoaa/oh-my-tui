@@ -98,7 +98,7 @@ test("formatFooterLine renders full wide layout (120 cols)", () => {
     extensionStatuses: [],
     activity: { type: "tool", name: "bash", detail: "npm test" },
     contextUsage: { percent: 14.2, contextWindow: 200000 },
-    modelId: "claude-3-5-sonnet",
+    modelId: "fixture-sonnet-35",
     provider: "anthropic",
     hasMultipleProviders: true,
     reasoning: true,
@@ -112,7 +112,7 @@ test("formatFooterLine renders full wide layout (120 cols)", () => {
   assert.ok(line.includes("npm test"));
   assert.ok(line.includes("14%"));
   assert.ok(line.includes("200k"));
-  assert.ok(line.includes("claude-3-5-sonnet"));
+  assert.ok(line.includes("fixture-sonnet-35"));
   assert.ok(line.includes("high"));
 });
 
@@ -146,7 +146,7 @@ test("formatFooterLine handles quiet idle state without activity icons", () => {
     extensionStatuses: [],
     activity: undefined, // Idle
     contextUsage: { percent: 5.0, contextWindow: 200000 },
-    modelId: "claude-3-5-sonnet",
+    modelId: "fixture-sonnet-35",
     provider: "anthropic",
     hasMultipleProviders: false,
     reasoning: false,
@@ -157,7 +157,7 @@ test("formatFooterLine handles quiet idle state without activity icons", () => {
   assert.ok(!line.includes("●"), "Idle footer should not show activity indicator");
   assert.ok(line.includes("master"));
   assert.ok(line.includes("5%"));
-  assert.ok(line.includes("claude-3-5-sonnet"));
+  assert.ok(line.includes("fixture-sonnet-35"));
 });
 
 test("formatFooterLine handles detached Git state and no repo", () => {
@@ -183,7 +183,7 @@ test("formatFooterLine preserves and displays extension statuses", () => {
   const data: FooterRenderData = {
     branch: "main",
     extensionStatuses: ["Alpha Status", "Beta Status"],
-    modelId: "claude-3-5-sonnet",
+    modelId: "fixture-sonnet-35",
   };
   const line = formatFooterLine(80, testTheme, data);
   assert.ok(line.includes("Alpha Status"));
@@ -243,7 +243,7 @@ test("formatFooterLine handles East Asian wide characters and emoji accurately",
     extensionStatuses: ["✨ 正在运行"],
     activity: { type: "running", detail: "思考中..." },
     contextUsage: { percent: 50, contextWindow: 128000 },
-    modelId: "claude-3-5-sonnet",
+    modelId: "fixture-sonnet-35",
   };
 
   for (const width of [120, 80, 50, 30, 15]) {
@@ -282,7 +282,7 @@ test("CleanFooterComponent renders with real Pi Theme instance across terminal w
 
   const mockCtx = {
     cwd: "/workspace/project",
-    model: { id: "claude-3-5-sonnet", provider: "anthropic", contextWindow: 200000, reasoning: true },
+    model: { id: "fixture-sonnet-35", provider: "anthropic", contextWindow: 200000, reasoning: true },
     getContextUsage: () => ({ percent: 42.5, contextWindow: 200000 }),
     thinkingLevel: "medium",
   } as unknown as ExtensionContext;
@@ -394,7 +394,7 @@ test("createFooterControl provides session-local on/off and yields to foreign fo
   const tuiCtx = {
     mode: "tui",
     cwd: "/app",
-    model: { id: "claude-3-5-sonnet", provider: "anthropic" },
+    model: { id: "fixture-sonnet-35", provider: "anthropic" },
     getContextUsage: () => ({ percent: 10, contextWindow: 200000 }),
     ui: {
       setFooter: (f: unknown) => { currentFooter = f; },

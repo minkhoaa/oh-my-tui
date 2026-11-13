@@ -214,7 +214,7 @@ test("parity: settled turn foot adheres to OMT format and suppression during str
     const baseLines = ["● Hello world"];
     const settled = signatureAssistant(baseLines, { isStreaming: false, hasToolCalls: false, lastMessage: { model: "gpt-4o" } } as any, theme, 80, {
       metadata: {
-        model: "claude-3-5-sonnet",
+        model: "fixture-sonnet-35",
         thinkingLevel: "high",
         durationMs: 4200,
         settledAt: new Date("2026-11-11T12:00:00Z"),
@@ -223,7 +223,7 @@ test("parity: settled turn foot adheres to OMT format and suppression during str
     const settledPlain = settled.map(stripTerminalSequences);
     const footLine = settledPlain.at(-1)!;
     assert.ok(footLine.includes("  ▣"), "settled footer opens with   ▣");
-    assert.ok(footLine.includes("claude-3-5-sonnet"), "includes model");
+    assert.ok(footLine.includes("fixture-sonnet-35"), "includes model");
     assert.ok(footLine.includes("high"), "includes thinking level");
     assert.ok(footLine.includes("4s"), "includes formatted duration");
     assert.ok(footLine.includes("done"), "includes settled time");

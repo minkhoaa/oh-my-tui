@@ -7,7 +7,7 @@ import type {
   BackgroundScene,
 } from "../../../core/config.ts";
 import type { ThemeName } from "../../../presets/shared/types.ts";
-import { CLAUDE_THEME_SCENES, renderProceduralScene, isClaudeThemeScene, type ProceduralScene } from "./procedural.ts";
+import { CURATED_SCENES, renderProceduralScene, isCuratedScene, type ProceduralScene } from "./procedural.ts";
 import { applyDimming, formatRgb, formatRgbBg, lerpColor, formatCellFg, formatCellBg, validCellViewport } from "../renderers/cell.ts";
 import { evaluateFullBackdropSupport, type FullBackdropEvaluation, type ColorMode } from "../capabilities/index.ts";
 
@@ -21,9 +21,9 @@ export type {
 };
 
 export {
-  CLAUDE_THEME_SCENES,
+  CURATED_SCENES,
   renderProceduralScene,
-  isClaudeThemeScene,
+  isCuratedScene,
   applyDimming,
   formatRgb,
   formatRgbBg,

@@ -8,12 +8,12 @@ import {
   scaleInterval,
   MotionCoordinator,
 } from "../extensions/omt/core/motion.ts";
-import { codexActivity, codexSpinner } from "../extensions/omt/presets/codex-inspired/motion.ts";
-import { openCodeScanner, openCodeSpinner } from "../extensions/omt/presets/opencode-inspired/motion.ts";
-import { claudeSpinner, claudeWorkingLine } from "../extensions/omt/presets/claude-code-inspired/motion.ts";
+import { cleanActivity, cleanSpinner } from "../extensions/omt/presets/omt-clean/motion.ts";
+import { railScanner, railSpinner } from "../extensions/omt/presets/omt-rail/motion.ts";
+import { emberSpinner, emberWorkingLine } from "../extensions/omt/presets/omt-ember/motion.ts";
 import { minimalSpinner } from "../extensions/omt/presets/minimal/motion.ts";
 import { nativeSpinner } from "../extensions/omt/presets/native/motion.ts";
-import { claudeThinkingLabel } from "../extensions/omt/presets/claude-code-inspired/assistant.ts";
+import { emberThinkingLabel } from "../extensions/omt/presets/omt-ember/assistant.ts";
 import { createCleanReadRenderer, createCleanBashRenderer } from "../extensions/omt/presets/shared/tools.ts";
 import { determineToolState, renderStatusIcon } from "../extensions/omt/presets/shared/tool-helpers.ts";
 import { formatFooterLine } from "../extensions/omt/presets/shared/footer.ts";
@@ -113,38 +113,38 @@ test("preset-specific motion utilities provide reference-matched frames and stat
     getColorMode: () => "truecolor",
   } as any;
 
-  // 1. Codex Inspired
-  assert.equal(codexActivity(dummyTheme, 0, false), "•");
-  const activeSweep = codexActivity(dummyTheme, 100, true);
+  // 1. OMT Clean
+  assert.equal(cleanActivity(dummyTheme, 0, false), "•");
+  const activeSweep = cleanActivity(dummyTheme, 100, true);
   assert.ok(activeSweep.length > 0);
-  assert.equal(codexSpinner(0, false), "•");
-  assert.equal(codexSpinner(0, true), "•");
-  assert.ok(codexSpinner(600, true).includes("◦"));
+  assert.equal(cleanSpinner(0, false), "•");
+  assert.equal(cleanSpinner(0, true), "•");
+  assert.ok(cleanSpinner(600, true).includes("◦"));
 
-  // 2. OpenCode Inspired
-  assert.equal(openCodeScanner(dummyTheme, 0, false), "⋯");
-  const activeScanner = openCodeScanner(dummyTheme, 0, true);
+  // 2. OMT Rail
+  assert.equal(railScanner(dummyTheme, 0, false), "⋯");
+  const activeScanner = railScanner(dummyTheme, 0, true);
   assert.ok(activeScanner.includes("■") || activeScanner.includes("⬝"));
-  assert.equal(openCodeSpinner(0, false), "⋯");
-  assert.equal(openCodeSpinner(0, true), "⠋");
-  assert.equal(openCodeSpinner(80, true), "⠙");
+  assert.equal(railSpinner(0, false), "⋯");
+  assert.equal(railSpinner(0, true), "⠋");
+  assert.equal(railSpinner(80, true), "⠙");
 
-  // 3. Claude Code Inspired
-  assert.equal(claudeSpinner(0, false), "●");
-  assert.equal(claudeSpinner(0, true), "·");
-  assert.equal(claudeSpinner(112 * 4, true), "✢");
-  assert.equal(claudeSpinner(112 * 5, true), "*");
-  assert.equal(claudeSpinner(112 * 9, true), "✽");
+  // 3. OMT Ember
+  assert.equal(emberSpinner(0, false), "●");
+  assert.equal(emberSpinner(0, true), "·");
+  assert.equal(emberSpinner(112 * 4, true), "✢");
+  assert.equal(emberSpinner(112 * 5, true), "*");
+  assert.equal(emberSpinner(112 * 9, true), "✽");
 
-  // Claude working line with shimmer
-  const animatedLine = claudeWorkingLine(dummyTheme, 500, "Thinking", "esc", 80, true);
+  // Ember working line with shimmer
+  const animatedLine = emberWorkingLine(dummyTheme, 500, "Thinking", "esc", 80, true);
   assert.match(animatedLine, /Thinking…/);
-  const staticLine = claudeWorkingLine(dummyTheme, 500, "Thinking", "esc", 80, false);
+  const staticLine = emberWorkingLine(dummyTheme, 500, "Thinking", "esc", 80, false);
   assert.match(staticLine, /Thinking…/);
 
-  // Claude reasoning label
-  assert.equal(claudeThinkingLabel(dummyTheme, true), "∴ Thinking…");
-  assert.equal(claudeThinkingLabel(dummyTheme, false), "∴ Thought");
+  // Ember reasoning label
+  assert.equal(emberThinkingLabel(dummyTheme, true), "∴ Thinking…");
+  assert.equal(emberThinkingLabel(dummyTheme, false), "∴ Thought");
 
   // 4. Minimal
   assert.equal(minimalSpinner(0, false), "·");

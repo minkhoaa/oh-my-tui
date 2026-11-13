@@ -2,7 +2,7 @@
 
 ## [0.1.0] - 2026-11-10
 
-- Five presentation presets: Codex Inspired, Claude Code Inspired, OpenCode Inspired, Minimal and Native.
+- Five presentation presets: OMT Clean, OMT Ember, OMT Rail, Minimal and Native.
 - Composer, message, tool, statusline and progress styling.
 - Settings, command palette, conversation navigation and tool inspection.
 - Git changes, session browsing, conversation export and branch navigation.

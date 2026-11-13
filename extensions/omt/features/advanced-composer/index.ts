@@ -99,18 +99,18 @@ export function formatComposerStatus(
   width?: number,
 ): string {
   const badges: string[] = [];
-  const preset = (presetName ?? "codex-inspired").toLowerCase();
+  const preset = (presetName ?? "omt-clean").toLowerCase();
 
   // Preset-specific token colors
   let multiColor: Parameters<Theme["fg"]>[0] = "accent";
   let tokenColor: Parameters<Theme["fg"]>[0] = "muted";
   let stashColor: Parameters<Theme["fg"]>[0] = "warning";
 
-  if (preset.includes("opencode")) {
+  if (preset.includes("rail")) {
     multiColor = "accent";
     tokenColor = "success";
     stashColor = "warning";
-  } else if (preset.includes("claude")) {
+  } else if (preset.includes("ember")) {
     multiColor = "accent";
     tokenColor = "dim";
     stashColor = "warning";

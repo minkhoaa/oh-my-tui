@@ -1,6 +1,6 @@
 import type { ThemeBg, ThemeColor } from "@earendil-works/pi-coding-agent";
 
-export type ThemeName = "omt-signature" | "codex-inspired" | "claude-code-inspired" | "opencode-inspired" | "minimal" | "native";
+export type ThemeName = "omt-signature" | "omt-clean" | "omt-ember" | "omt-rail" | "minimal" | "native";
 export interface ThemePreset {
   readonly id: ThemeName;
   readonly label: string;

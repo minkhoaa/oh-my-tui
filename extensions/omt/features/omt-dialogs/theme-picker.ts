@@ -111,7 +111,7 @@ export const BUILTIN_BACKGROUNDS: readonly BackgroundItem[] = [
   { id: "nightowl", name: "nightowl", hex: "#011627", darkHex: "#011627", lightHex: "#011627" },
   { id: "nord", name: "nord", hex: "#2E3440", darkHex: "#2E3440", lightHex: "#ECEFF4" },
   { id: "one-dark", name: "one-dark", hex: "#282c34", darkHex: "#282c34", lightHex: "#fafafa" },
-  { id: "opencode", name: "opencode", hex: "#0a0a0a", darkHex: "#0a0a0a", lightHex: "#ffffff" },
+  { id: "rail", name: "rail", hex: "#0a0a0a", darkHex: "#0a0a0a", lightHex: "#ffffff" },
   { id: "osaka-jade", name: "osaka-jade", hex: "#111c18", darkHex: "#111c18", lightHex: "#F6F5DD" },
   { id: "palenight", name: "palenight", hex: "#292d3e", darkHex: "#292d3e", lightHex: "#fafafa" },
   { id: "rosepine", name: "rosepine", hex: "#191724", darkHex: "#191724", lightHex: "#faf4ed" },

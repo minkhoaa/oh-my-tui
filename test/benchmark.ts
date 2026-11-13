@@ -70,14 +70,14 @@ export type PresetBenchmarkTarget =
   | "native-pi"
   | "omt-native"
   | "omt-signature"
-  | "codex-inspired"
-  | "opencode-inspired"
-  | "claude-code-inspired"
+  | "omt-clean"
+  | "omt-rail"
+  | "omt-ember"
   | "minimal"
   | "signature-noanim"
-  | "codex-noanim"
-  | "opencode-noanim"
-  | "claude-noanim";
+  | "clean-noanim"
+  | "rail-noanim"
+  | "ember-noanim";
 
 export interface BenchmarkReport {
   timestamp: string;
@@ -98,7 +98,7 @@ export interface BenchmarkReport {
 
 export interface TargetResults {
   coldStartupMs: number;
-  warmStartupMs: Stats;
+  emberStartupMs: Stats;
   firstUsableFrameMs: Stats;
   idleCpuPercent: number;
   idleActiveTimers: number;
@@ -276,13 +276,13 @@ export async function benchmarkTarget(
     await cleanup();
   }
 
-  // 2. Warm startup
-  const warmStartupSamples: number[] = [];
+  // 2. Ember startup
+  const emberStartupSamples: number[] = [];
   for (let i = 0; i < samples; i++) {
     const t0 = performance.now();
     const { session, cleanup } = await createIsolatedSession(isOmt);
     await session.bindExtensions({ mode: "tui" });
-    warmStartupSamples.push(performance.now() - t0);
+    emberStartupSamples.push(performance.now() - t0);
     await session.dispose();
     await cleanup();
   }
@@ -485,7 +485,7 @@ export async function benchmarkTarget(
 
   // 9. Preset Switching, Resize, and Reload Latency
   const switchSamples: number[] = [];
-  const presetsToCycle: ThemeName[] = ["omt-signature", "codex-inspired", "opencode-inspired", "claude-code-inspired", "minimal", "native"];
+  const presetsToCycle: ThemeName[] = ["omt-signature", "omt-clean", "omt-rail", "omt-ember", "minimal", "native"];
   for (let i = 0; i < 20; i++) {
     const nextPreset = presetsToCycle[i % presetsToCycle.length]!;
     const t0 = performance.now();
@@ -524,7 +524,7 @@ export async function benchmarkTarget(
 
   return {
     coldStartupMs,
-    warmStartupMs: computeStats(warmStartupSamples),
+    emberStartupMs: computeStats(emberStartupSamples),
     firstUsableFrameMs: computeStats(firstFrameSamples),
     idleCpuPercent,
     idleActiveTimers,
@@ -565,14 +565,14 @@ export async function runFullBenchmarkSuite(): Promise<BenchmarkReport> {
     "native-pi",
     "omt-native",
     "omt-signature",
-    "codex-inspired",
-    "opencode-inspired",
-    "claude-code-inspired",
+    "omt-clean",
+    "omt-rail",
+    "omt-ember",
     "minimal",
     "signature-noanim",
-    "codex-noanim",
-    "opencode-noanim",
-    "claude-noanim",
+    "clean-noanim",
+    "rail-noanim",
+    "ember-noanim",
   ];
 
   const results = {} as Record<PresetBenchmarkTarget, TargetResults>;
@@ -613,7 +613,7 @@ if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) {
         Object.entries(report.targets).map(([name, data]) => ({
           Target: name,
           "Cold Start (ms)": data.coldStartupMs.toFixed(1),
-          "Warm Start (ms)": data.warmStartupMs.median.toFixed(1),
+          "Ember Start (ms)": data.emberStartupMs.median.toFixed(1),
           "First Frame (ms)": data.firstUsableFrameMs.median.toFixed(1),
           "Idle CPU %": data.idleCpuPercent,
           "Idle Timers": data.idleActiveTimers,

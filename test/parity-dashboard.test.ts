@@ -138,12 +138,12 @@ test("cost section suppression: hidden when single model session (length <= 1), 
   assert.deepEqual(renderCostSection([], 30, mockTheme), []);
 
   // Single model session -> suppressed matching OMT len(m.sessBreak) <= 1
-  const single = [{ key: "claude-3-7-sonnet", cost: 0.042 }];
+  const single = [{ key: "fixture-sonnet-37", cost: 0.042 }];
   assert.deepEqual(renderCostSection(single, 30, mockTheme), [], "Single model session must suppress COST section");
 
   // Multiple models -> rendered
   const multi = [
-    { key: "claude-3-7-sonnet", cost: 0.042 },
+    { key: "fixture-sonnet-37", cost: 0.042 },
     { key: "gpt-4o", cost: 0.018 },
   ];
   const lines = renderCostSection(multi, 30, mockTheme);
@@ -438,7 +438,7 @@ test("task widget: renders exact above-editor header, active task spinner/tokens
 
 test("team dashboard panel: renders workers table, tabs, and status indicators", () => {
   const data = {
-    title: "Swarm Herd",
+    title: "Sember Herd",
     summary: "3 workers active · 1 idle",
     workers: [
       { id: "w1", label: "coder-agent", agentName: "coder", status: "running", elapsedMs: 15000 },
@@ -451,7 +451,7 @@ test("team dashboard panel: renders workers table, tabs, and status indicators",
   assert.ok(lines.length > 5);
   const text = lines.map((l) => stripTerminalSequences(l)).join("\n");
 
-  assert.ok(text.includes("Swarm Herd"));
+  assert.ok(text.includes("Sember Herd"));
   assert.ok(text.includes("[1 Workers]"));
   assert.ok(text.includes("coder-agent"));
   assert.ok(text.includes("running"));

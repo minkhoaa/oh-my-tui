@@ -247,7 +247,7 @@ test("ResumeDialogComponent: current session cannot be deleted across all curren
   const rendered = comp.render(120).join("\n");
   assert.ok(
     rendered.includes("can't delete the current session — switch first"),
-    "must display exact Go current session safety notice",
+    "must display the current-session safety notice",
   );
 });
 

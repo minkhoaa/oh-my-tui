@@ -1,11 +1,11 @@
 import { type AgentToolResult, type Theme, type ToolRenderers, getLanguageFromPath, highlightCode } from "@earendil-works/pi-coding-agent";
 import { Text, indexedColor } from "@earendil-works/pi-tui";
-import { contentPadding, isCodexTheme, isOpenCodeTheme, isClaudeTheme, quiet } from "./style.ts";
+import { contentPadding, isCleanTheme, isRailTheme, isEmberTheme, quiet } from "./style.ts";
 import { getActiveTheme } from "../../core/theme.ts";
 import { homedir } from "node:os";
 import { isAbsolute, relative } from "node:path";
-import { claudeFg } from "../claude-code-inspired/rendering.ts";
-import { codexDim } from "../codex-inspired/rendering.ts";
+import { emberFg } from "../omt-ember/rendering.ts";
+import { cleanDim } from "../omt-clean/rendering.ts";
 
 export type ToolRenderContext = Parameters<NonNullable<ToolRenderers["renderCall"]>>[2];
 export const OMT_TOOL_OWNER = Symbol.for("oh-my-tui.tool-owner");
@@ -28,7 +28,7 @@ export interface DiffSummary { additions: number; deletions: number; chunks: num
 
 export interface HeaderStateTracker {
   executionState?: ToolExecutionState;
-  openCodeBlock?: boolean;
+  railBlock?: boolean;
   updateHeader?: (state: ToolExecutionState) => void;
 }
 
@@ -41,23 +41,23 @@ export function determineToolState(
   if (isPartial) return "running";
 
   const details = result?.details as Record<string, unknown> | undefined;
-  const opencode = isOpenCodeTheme();
-  const strict = isClaudeTheme();
-  const codex = isCodexTheme(getActiveTheme()) || opencode || strict;
+  const rail = isRailTheme();
+  const strict = isEmberTheme();
+  const clean = isCleanTheme(getActiveTheme()) || rail || strict;
   const isInterrupted = details?.interrupted === true
     || details?.aborted === true
     || details?.cancelled === true
     || details?.exitCode === 130
-    || (!codex && details?.exitCode === 137)
+    || (!clean && details?.exitCode === 137)
     || details?.signal === "SIGINT"
     || details?.signal === "SIGTERM"
-    || (codex
+    || (clean
       ? !!(isError || result?.isError) && (/^(?:command|operation) aborted(?:[.!:\s]|$)/i.test(output.trim())
-        || (opencode || strict) && /(?:^|\n\n)Command aborted\s*$/.test(output))
+        || (rail || strict) && /(?:^|\n\n)Command aborted\s*$/.test(output))
       : /command aborted|operation aborted|interrupted|sigint|cancelled/i.test(output));
 
   if (isInterrupted) return "interrupted";
-  if (isError || result?.isError || (codex && typeof details?.exitCode === "number" && details.exitCode !== 0)) return "failure";
+  if (isError || result?.isError || (clean && typeof details?.exitCode === "number" && details.exitCode !== 0)) return "failure";
   return "success";
 }
 
@@ -66,9 +66,9 @@ export function renderStatusIcon(state: ToolExecutionState, theme: Theme): strin
   const color = state === "running" ? active.color.secondary
     : state === "failure" ? active.color.error
     : state === "interrupted" ? active.color.warning : active.color.success;
-  if (isClaudeTheme(active)) return claudeFg(theme, state === "success" ? "success" : state === "failure" ? "error" : state === "interrupted" ? "accent" : "muted", "●");
-  return isCodexTheme(active)
-    ? (state === "running" ? codexDim("•") : theme.style("•", { fg: indexedColor(state === "success" ? 2 : 1), bold: true }))
+  if (isEmberTheme(active)) return emberFg(theme, state === "success" ? "success" : state === "failure" ? "error" : state === "interrupted" ? "accent" : "muted", "●");
+  return isCleanTheme(active)
+    ? (state === "running" ? cleanDim("•") : theme.style("•", { fg: indexedColor(state === "success" ? 2 : 1), bold: true }))
     : theme.fg(color, active.glyph[state]);
 }
 

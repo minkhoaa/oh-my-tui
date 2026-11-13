@@ -101,15 +101,15 @@ test("managed curated aliases and declarative packs propagate the shared texture
   const store = new ConfigStore(dir);
   try {
     const asset = store.assets.load(store.assets.resolveId("moonlit")!, true);
-    const palette = getPresetBackgroundPalette("codex-inspired");
+    const palette = getPresetBackgroundPalette("omt-clean");
     const draw = (textureScale: number) => renderManagedBackground(store.assets, asset, 40, 12,
-      { textureScale }, 1000, "codex-inspired", palette, true, "monochrome");
+      { textureScale }, 1000, "omt-clean", palette, true, "monochrome");
     assert.notDeepEqual(draw(0.5), draw(1));
     const layer = { scene: "matrix" as const, speed: 1, seed: 1, density: 1, count: 20 };
     const pack = { ...asset, metadata: { ...asset.metadata, alias: undefined,
       scene: { motion: true, layers: [layer] }, imageIds: [] } };
-    const plain = renderManagedBackground(store.assets, pack, 40, 12, { textureScale: 1 }, 1000, "codex-inspired", palette);
-    const small = renderManagedBackground(store.assets, pack, 40, 12, { textureScale: 0.5 }, 1000, "codex-inspired", palette);
+    const plain = renderManagedBackground(store.assets, pack, 40, 12, { textureScale: 1 }, 1000, "omt-clean", palette);
+    const small = renderManagedBackground(store.assets, pack, 40, 12, { textureScale: 0.5 }, 1000, "omt-clean", palette);
     assert.notDeepEqual(small, plain);
   } finally { store.assets.dispose(); rmSync(dir, { recursive: true, force: true }); }
 });
@@ -124,7 +124,7 @@ test("scale commands validate input, preserve playback and invalidate native ass
   const ctx = { cwd: dir, mode: "tui", hasUI: true, ui: { getBackgroundTui: () => tui,
     setWidget() {}, notify: (m: string) => notices.push(m) } } as any;
   try {
-    configStore.init(dir); setActiveTheme("codex-inspired");
+    configStore.init(dir); setActiveTheme("omt-clean");
     configStore.setAnimationOverride("mode", "off");
     omt({ registerFlag() {}, registerToolRenderer() {}, getFlag() {},
       registerCommand(_: string, cmd: any) { command = cmd; },

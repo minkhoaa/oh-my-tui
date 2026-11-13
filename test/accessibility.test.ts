@@ -198,7 +198,7 @@ test("DEFAULT_SHORTCUT_HELP_ENTRIES contains categorized shortcuts across Naviga
   assert.ok(DEFAULT_SHORTCUT_HELP_ENTRIES.some((e) => e.category === "Navigation" && e.key.includes("g / G")));
 
   // Presets
-  assert.ok(DEFAULT_SHORTCUT_HELP_ENTRIES.some((e) => e.category === "Presets" && e.key.includes("/omt theme codex")));
+  assert.ok(DEFAULT_SHORTCUT_HELP_ENTRIES.some((e) => e.category === "Presets" && e.key.includes("/omt theme clean")));
 
   // Toggles
   assert.ok(DEFAULT_SHORTCUT_HELP_ENTRIES.some((e) => e.category === "Toggles" && e.key.includes("Ctrl+P")));
@@ -219,8 +219,8 @@ test("filterShortcutEntries filters shortcuts by key, description, and category"
   assert.ok(nav.every((e) => e.category === "Navigation" || e.description.includes("Navigation")));
 
   // Key match
-  const codex = filterShortcutEntries(entries, "codex");
-  assert.ok(codex.some((e) => e.key.includes("codex")));
+  const clean = filterShortcutEntries(entries, "clean");
+  assert.ok(clean.some((e) => e.key.includes("clean")));
 
   // Multi-token match
   const copyAction = filterShortcutEntries(entries, "copy clipboard");
@@ -303,13 +303,13 @@ test("createShortcutHelpComponent keyboard navigation: typing filter, Up/Down, E
   assert.equal(comp.getSelectedIndex(), 0);
   assert.equal(comp.getQuery(), "");
 
-  // Type filter query 'codex'
-  for (const char of "codex") {
+  // Type filter query 'clean'
+  for (const char of "clean") {
     comp.handleInput(char);
   }
-  assert.equal(comp.getQuery(), "codex");
+  assert.equal(comp.getQuery(), "clean");
   assert.ok(comp.getFilteredEntries().length > 0);
-  assert.ok(comp.getFilteredEntries().every((e: any) => e.key.toLowerCase().includes("codex") || e.description.toLowerCase().includes("codex")));
+  assert.ok(comp.getFilteredEntries().every((e: any) => e.key.toLowerCase().includes("clean") || e.description.toLowerCase().includes("clean")));
 
   // Up/Down navigation within filtered entries
   comp.handleInput("\x1b[B"); // Down
@@ -320,7 +320,7 @@ test("createShortcutHelpComponent keyboard navigation: typing filter, Up/Down, E
 
   // Backspace deletes characters
   comp.handleInput("\x7f");
-  assert.equal(comp.getQuery(), "code");
+  assert.equal(comp.getQuery(), "clea");
 
   // Esc closes
   comp.handleInput("\x1b");

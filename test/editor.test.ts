@@ -33,7 +33,7 @@ const editorTheme = {
   },
 };
 function editors() {
-  setActiveTheme("codex-inspired");
+  setActiveTheme("omt-clean");
   const tui = { terminal: { rows: 30, columns: 80 } as Terminal, requestRender() {} } as TUI;
   const native = new CustomEditor(tui, editorTheme, keys as PiKeys);
   const clean = new CleanEditor(tui, editorTheme, keys as PiKeys, () => theme);

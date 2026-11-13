@@ -24,11 +24,11 @@ test("all theme presets exist with distinct semantic tokens and omt-signature as
   resetActiveTheme();
   assert.equal(getActiveTheme().id, "omt-signature");
   assert.equal(getActiveTheme().label, "OMT Signature");
-  assert.deepEqual(THEME_NAMES, ["omt-signature", "codex-inspired", "claude-code-inspired", "opencode-inspired", "minimal", "native"]);
+  assert.deepEqual(THEME_NAMES, ["omt-signature", "omt-clean", "omt-ember", "omt-rail", "minimal", "native"]);
   assert.equal(THEME_PRESETS.omt, THEME_PRESETS["omt-signature"]);
   assert.equal(THEME_PRESETS.signature, THEME_PRESETS["omt-signature"]);
-  assert.equal(THEME_PRESETS.opencode, THEME_PRESETS["opencode-inspired"]);
-  assert.equal(THEME_PRESETS.codex, THEME_PRESETS["codex-inspired"], "backward-compatible alias resolves to codex-inspired");
+  assert.equal(THEME_PRESETS.rail, THEME_PRESETS["omt-rail"]);
+  assert.equal(THEME_PRESETS.clean, THEME_PRESETS["omt-clean"], "backward-compatible alias resolves to omt-clean");
 
   for (const name of THEME_NAMES) {
     const preset = THEME_PRESETS[name];
@@ -58,40 +58,40 @@ test("all theme presets exist with distinct semantic tokens and omt-signature as
 
   // Visual distinction of prompt glyphs
   assert.equal(THEME_PRESETS["omt-signature"].glyph.prompt, "◈");
-  assert.equal(THEME_PRESETS["codex-inspired"].glyph.prompt, "›");
-  assert.equal(THEME_PRESETS.claude.glyph.prompt, "❯");
-  assert.equal(THEME_PRESETS.opencode.glyph.prompt, "");
+  assert.equal(THEME_PRESETS["omt-clean"].glyph.prompt, "›");
+  assert.equal(THEME_PRESETS.ember.glyph.prompt, "❯");
+  assert.equal(THEME_PRESETS.rail.glyph.prompt, "");
   assert.equal(THEME_PRESETS.minimal.glyph.prompt, ">");
   assert.equal(THEME_PRESETS.native.glyph.prompt, "");
 
   // Thinking indicators
   assert.equal(THEME_PRESETS["omt-signature"].thinking.indicator, "◈");
-  assert.equal(THEME_PRESETS["codex-inspired"].thinking.indicator, "•");
-  assert.equal(THEME_PRESETS.claude.thinking.indicator, "●");
-  assert.equal(THEME_PRESETS.opencode.thinking.indicator, "⋯");
+  assert.equal(THEME_PRESETS["omt-clean"].thinking.indicator, "•");
+  assert.equal(THEME_PRESETS.ember.thinking.indicator, "●");
+  assert.equal(THEME_PRESETS.rail.thinking.indicator, "⋯");
   assert.equal(THEME_PRESETS.minimal.thinking.indicator, "·");
 
   // Thinking labels
   assert.equal(THEME_PRESETS["omt-signature"].thinking.label, "Reasoning");
-  assert.equal(THEME_PRESETS["codex-inspired"].thinking.label, "Reasoning");
-  assert.equal(THEME_PRESETS.claude.thinking.label, "∴ Thought");
-  assert.equal(THEME_PRESETS.opencode.thinking.label, "+ Thought");
+  assert.equal(THEME_PRESETS["omt-clean"].thinking.label, "Reasoning");
+  assert.equal(THEME_PRESETS.ember.thinking.label, "∴ Thought");
+  assert.equal(THEME_PRESETS.rail.thinking.label, "+ Thought");
   assert.equal(THEME_PRESETS.minimal.thinking.label, "Thinking");
   assert.equal(THEME_PRESETS.native.thinking.label, "Thinking...");
 
   // Framing
   assert.equal(THEME_PRESETS["omt-signature"].editor.frame, "line");
-  assert.equal(THEME_PRESETS["codex-inspired"].editor.frame, "blank");
-  assert.equal(THEME_PRESETS.claude.editor.frame, "line");
-  assert.equal(THEME_PRESETS.opencode.editor.frame, "blank");
+  assert.equal(THEME_PRESETS["omt-clean"].editor.frame, "blank");
+  assert.equal(THEME_PRESETS.ember.editor.frame, "line");
+  assert.equal(THEME_PRESETS.rail.editor.frame, "blank");
   assert.equal(THEME_PRESETS.minimal.editor.frame, "blank");
   assert.equal(THEME_PRESETS.native.editor.frame, "native");
 
   // Surface panels
   assert.equal(THEME_PRESETS["omt-signature"].panelBg, false);
-  assert.equal(THEME_PRESETS["codex-inspired"].panelBg, true);
-  assert.equal(THEME_PRESETS.claude.panelBg, false);
-  assert.equal(THEME_PRESETS.opencode.panelBg, true);
+  assert.equal(THEME_PRESETS["omt-clean"].panelBg, true);
+  assert.equal(THEME_PRESETS.ember.panelBg, false);
+  assert.equal(THEME_PRESETS.rail.panelBg, true);
   assert.equal(THEME_PRESETS.minimal.panelBg, false);
   assert.equal(THEME_PRESETS.native.panelBg, false);
 });
@@ -99,19 +99,19 @@ test("all theme presets exist with distinct semantic tokens and omt-signature as
 test("setActiveTheme updates active style and resets cleanly", () => {
   resetActiveTheme();
   assert.equal(getActiveTheme().id, "omt-signature");
-  setActiveTheme("claude");
-  assert.equal(getActiveTheme().id, "claude-code-inspired");
-  setActiveTheme("opencode");
-  assert.equal(getActiveTheme().id, "opencode-inspired");
+  setActiveTheme("ember");
+  assert.equal(getActiveTheme().id, "omt-ember");
+  setActiveTheme("rail");
+  assert.equal(getActiveTheme().id, "omt-rail");
   setActiveTheme("minimal");
   assert.equal(getActiveTheme().id, "minimal");
   setActiveTheme("native");
   assert.equal(getActiveTheme().id, "native");
-  setActiveTheme("codex-inspired");
-  assert.equal(getActiveTheme().id, "codex-inspired");
-  // Backward-compatible alias 'codex'
-  setActiveTheme("codex");
-  assert.equal(getActiveTheme().id, "codex-inspired");
+  setActiveTheme("omt-clean");
+  assert.equal(getActiveTheme().id, "omt-clean");
+  // Backward-compatible alias 'clean'
+  setActiveTheme("clean");
+  assert.equal(getActiveTheme().id, "omt-clean");
   resetActiveTheme();
   assert.equal(getActiveTheme().id, "omt-signature");
   assert.throws(() => setActiveTheme("unknown" as ThemeName), /Unknown theme preset/);
@@ -122,13 +122,13 @@ test("legacy theme names normalize without accepting inherited object properties
     assert.equal(resolveThemeName("omt"), "omt-signature");
     assert.equal(resolveThemeName("signature"), "omt-signature");
     assert.equal(resolveThemeName("omt-signature"), "omt-signature");
-    assert.equal(resolveThemeName("codex"), "codex-inspired");
-    assert.equal(resolveThemeName("codex-inspired"), "codex-inspired");
-    assert.equal(setActiveTheme("codex"), THEME_PRESETS["codex-inspired"]);
+    assert.equal(resolveThemeName("clean"), "omt-clean");
+    assert.equal(resolveThemeName("omt-clean"), "omt-clean");
+    assert.equal(setActiveTheme("clean"), THEME_PRESETS["omt-clean"]);
     for (const name of ["unknown", "constructor", "toString", "__proto__", "hasOwnProperty"]) {
       assert.equal(resolveThemeName(name), undefined);
       assert.throws(() => setActiveTheme(name), /Unknown theme preset/);
-      assert.equal(getActiveTheme(), THEME_PRESETS["codex-inspired"], "invalid names preserve selection");
+      assert.equal(getActiveTheme(), THEME_PRESETS["omt-clean"], "invalid names preserve selection");
     }
   } finally { resetActiveTheme(); }
 });
@@ -139,7 +139,7 @@ test("editor renders distinct visual signatures across all presets", () => {
   const keys = new KeybindingsManager(TUI_KEYBINDINGS);
 
   try {
-    for (const name of ["omt-signature", "codex-inspired", "claude", "opencode", "minimal", "native"] as const) {
+    for (const name of ["omt-signature", "omt-clean", "ember", "rail", "minimal", "native"] as const) {
       setActiveTheme(name);
       const editor = new CleanEditor(tui, { borderColor: (s) => s, selectList: getSelectListTheme() }, keys as PiKeys, () => theme);
       editor.setText("test input 你好");
@@ -157,16 +157,16 @@ test("editor renders distinct visual signatures across all presets", () => {
         assert.ok(topBorder.includes("─"), "signature line framing");
         assert.ok(promptLine.trimStart().startsWith("test input"), "Signature preserves the native editor text row");
         assert.equal(promptLine.indexOf("test input"), editor.getPaddingX());
-      } else if (name === "codex-inspired") {
-        assert.ok(!topBorder.includes("─"), "codex blank framing removes rules");
+      } else if (name === "omt-clean") {
+        assert.ok(!topBorder.includes("─"), "clean blank framing removes rules");
         assert.ok(promptLine.includes("› test input"));
         assert.equal(promptLine.indexOf("test input"), 2);
-      } else if (name === "claude") {
-        assert.ok(topBorder.includes("─"), "Claude's composer has horizontal rules");
+      } else if (name === "ember") {
+        assert.ok(topBorder.includes("─"), "Ember's composer has horizontal rules");
         assert.ok(promptLine.includes("❯ test input"));
         assert.equal(promptLine.indexOf("test input"), 2);
-      } else if (name === "opencode") {
-        assert.ok(!topBorder.includes("─"), "OpenCode uses a left rail, not rules");
+      } else if (name === "rail") {
+        assert.ok(!topBorder.includes("─"), "Rail uses a left rail, not rules");
         assert.equal(promptLine.indexOf("┃"), 2);
         assert.equal(promptLine.indexOf("test input"), 5);
       } else if (name === "minimal") {
@@ -195,26 +195,26 @@ test("tool execution renders distinct glyphs and formatting across presets", () 
     assert.equal(stripTerminalSequences(renderStatusIcon("failure", theme)), "✖");
     assert.equal(stripTerminalSequences(renderStatusIcon("interrupted", theme)), "■");
 
-    // Codex retains its bullet through running and completed execution states.
-    setActiveTheme("codex-inspired");
+    // Clean retains its bullet through running and completed execution states.
+    setActiveTheme("omt-clean");
     assert.equal(stripTerminalSequences(renderStatusIcon("running", theme)), "•");
     assert.equal(stripTerminalSequences(renderStatusIcon("success", theme)), "•");
     assert.equal(stripTerminalSequences(renderStatusIcon("failure", theme)), "•");
     assert.equal(stripTerminalSequences(renderStatusIcon("interrupted", theme)), "•");
 
-    // Also test alias 'codex'
-    setActiveTheme("codex");
+    // Also test alias 'clean'
+    setActiveTheme("clean");
     assert.equal(stripTerminalSequences(renderStatusIcon("running", theme)), "•");
 
-    // Claude uses a record bullet and semantic color, not checkmarks.
-    setActiveTheme("claude");
+    // Ember uses a record bullet and semantic color, not checkmarks.
+    setActiveTheme("ember");
     assert.equal(stripTerminalSequences(renderStatusIcon("running", theme)), "●");
     assert.equal(stripTerminalSequences(renderStatusIcon("success", theme)), "●");
     assert.equal(stripTerminalSequences(renderStatusIcon("failure", theme)), "●");
     assert.equal(stripTerminalSequences(renderStatusIcon("interrupted", theme)), "●");
 
-    // OpenCode uses call-specific arrows/shell grammar, not success checkmarks.
-    setActiveTheme("opencode");
+    // Rail uses call-specific arrows/shell grammar, not success checkmarks.
+    setActiveTheme("rail");
     assert.equal(stripTerminalSequences(renderStatusIcon("running", theme)), "⋯");
     assert.equal(stripTerminalSequences(renderStatusIcon("success", theme)), "→");
     assert.equal(stripTerminalSequences(renderStatusIcon("failure", theme)), "→");
@@ -261,22 +261,22 @@ test("getStateGlyph and getStateColor standardize all observable agent states ac
   assert.equal(getStateGlyph("interrupted", THEME_PRESETS["omt-signature"]), "■");
   assert.equal(getStateGlyph("error", THEME_PRESETS["omt-signature"]), "✖");
 
-  // Codex indicators
-  assert.equal(getStateGlyph("thinking", THEME_PRESETS["codex-inspired"]), "•");
-  assert.equal(getStateGlyph("executing", THEME_PRESETS["codex-inspired"]), "•");
-  assert.equal(getStateGlyph("completed", THEME_PRESETS["codex-inspired"]), "•");
-  assert.equal(getStateGlyph("interrupted", THEME_PRESETS["codex-inspired"]), "•");
-  assert.equal(getStateGlyph("error", THEME_PRESETS["codex-inspired"]), "•");
+  // Clean indicators
+  assert.equal(getStateGlyph("thinking", THEME_PRESETS["omt-clean"]), "•");
+  assert.equal(getStateGlyph("executing", THEME_PRESETS["omt-clean"]), "•");
+  assert.equal(getStateGlyph("completed", THEME_PRESETS["omt-clean"]), "•");
+  assert.equal(getStateGlyph("interrupted", THEME_PRESETS["omt-clean"]), "•");
+  assert.equal(getStateGlyph("error", THEME_PRESETS["omt-clean"]), "•");
 
-  // Claude indicators
-  assert.equal(getStateGlyph("thinking", THEME_PRESETS.claude), "●");
-  assert.equal(getStateGlyph("executing", THEME_PRESETS.claude), "●");
+  // Ember indicators
+  assert.equal(getStateGlyph("thinking", THEME_PRESETS.ember), "●");
+  assert.equal(getStateGlyph("executing", THEME_PRESETS.ember), "●");
 
-  // OpenCode indicators
-  assert.equal(getStateGlyph("thinking", THEME_PRESETS.opencode), "⋯");
-  assert.equal(getStateGlyph("completed", THEME_PRESETS.opencode), "→");
-  assert.equal(getStateGlyph("error", THEME_PRESETS.opencode), "→");
-  assert.equal(getStateGlyph("interrupted", THEME_PRESETS.opencode), "→");
+  // Rail indicators
+  assert.equal(getStateGlyph("thinking", THEME_PRESETS.rail), "⋯");
+  assert.equal(getStateGlyph("completed", THEME_PRESETS.rail), "→");
+  assert.equal(getStateGlyph("error", THEME_PRESETS.rail), "→");
+  assert.equal(getStateGlyph("interrupted", THEME_PRESETS.rail), "→");
 
   // Minimal indicators
   assert.equal(getStateGlyph("thinking", THEME_PRESETS.minimal), "·");
@@ -306,24 +306,24 @@ test("footer renders distinct separators, branch icons, and activity glyphs acro
     assert.ok(sigLine.includes("gpt-5"));
     assert.ok(sigLine.includes("45%"));
 
-    setActiveTheme("codex-inspired");
-    const codexLine = stripTerminalSequences(formatFooterLine(100, theme, data));
-    assert.ok(codexLine.includes("main"));
-    assert.ok(codexLine.includes("Context 55% left"));
-    assert.ok(!codexLine.includes("bash"), "working row already reports activity");
-    assert.ok(codexLine.includes(" · "));
+    setActiveTheme("omt-clean");
+    const cleanLine = stripTerminalSequences(formatFooterLine(100, theme, data));
+    assert.ok(cleanLine.includes("main"));
+    assert.ok(cleanLine.includes("Context 55% left"));
+    assert.ok(!cleanLine.includes("bash"), "working row already reports activity");
+    assert.ok(cleanLine.includes(" · "));
 
-    setActiveTheme("claude");
-    const claudeLine = stripTerminalSequences(formatFooterLine(100, theme, data));
-    assert.ok(claudeLine.includes("(main)"));
-    assert.ok(claudeLine.includes("gpt-5"));
-    assert.ok(!claudeLine.includes("bash"), "statusline does not duplicate the working row");
+    setActiveTheme("ember");
+    const emberLine = stripTerminalSequences(formatFooterLine(100, theme, data));
+    assert.ok(emberLine.includes("(main)"));
+    assert.ok(emberLine.includes("gpt-5"));
+    assert.ok(!emberLine.includes("bash"), "statusline does not duplicate the working row");
 
-    setActiveTheme("opencode");
-    const opencodeLine = stripTerminalSequences(formatFooterLine(100, theme, data));
-    assert.ok(opencodeLine.includes("main"));
-    assert.ok(opencodeLine.includes("active"));
-    assert.ok(!opencodeLine.includes("bash"), "no duplicate working activity");
+    setActiveTheme("rail");
+    const railLine = stripTerminalSequences(formatFooterLine(100, theme, data));
+    assert.ok(railLine.includes("main"));
+    assert.ok(railLine.includes("active"));
+    assert.ok(!railLine.includes("bash"), "no duplicate working activity");
 
     setActiveTheme("minimal");
     const minimalLine = stripTerminalSequences(formatFooterLine(100, theme, data));
@@ -341,10 +341,10 @@ test("user messages align with preset content padding and invalidate cache on th
   try {
     initTheme("dark");
     resetActiveTheme();
-    setActiveTheme("codex-inspired");
+    setActiveTheme("omt-clean");
     const msg = new UserMessageComponent("hello world");
-    const codexLines = msg.render(80);
-    assert.equal(stripTerminalSequences(codexLines[1]!).indexOf("hello"), 2);
+    const cleanLines = msg.render(80);
+    assert.equal(stripTerminalSequences(cleanLines[1]!).indexOf("hello"), 2);
 
     setActiveTheme("minimal");
     control.applyTheme?.();
@@ -356,10 +356,10 @@ test("user messages align with preset content padding and invalidate cache on th
     const nativeLines = msg.render(80);
     assert.equal(stripTerminalSequences(nativeLines[1]!).indexOf("hello"), 1);
 
-    setActiveTheme("claude");
+    setActiveTheme("ember");
     control.applyTheme?.();
-    const claudeLines = msg.render(80);
-    assert.equal(stripTerminalSequences(claudeLines[1]!).indexOf("hello"), 2);
+    const emberLines = msg.render(80);
+    assert.equal(stripTerminalSequences(emberLines[1]!).indexOf("hello"), 2);
   } finally {
     control.cleanup?.();
     resetActiveTheme();
@@ -376,7 +376,7 @@ test("all presets handle terminal widths from 120 down to 5 without overflowing"
     extensionStatuses: ["running tests"],
     activity: { type: "tool", name: "bash", detail: "npm test" },
     contextUsage: { percent: 85, contextWindow: 128000 },
-    modelId: "claude-3-7-sonnet",
+    modelId: "fixture-sonnet-37",
     reasoning: true,
     thinkingLevel: "high",
   };

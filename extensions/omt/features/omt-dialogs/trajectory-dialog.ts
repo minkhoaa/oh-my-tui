@@ -300,7 +300,7 @@ export interface TrajDetailRow {
 /**
  * Word-wraps long lines while keeping continuation rows classified
  * under the same diffKind.
- * Matches Go: trajDetailRows(detail string, w int) []trajRow
+ * Keeps wrapped continuation rows classified under the same diff kind.
  */
 function wrapLine(line: string, maxW: number): string[] {
   if (line.length <= maxW) return [line];
@@ -490,7 +490,7 @@ export class OmtTrajectoryComponent implements Component, Focusable {
   }
 
   /**
-   * Mouse wheel handling matching Go updateTrajWheel:
+   * Mouse wheel handling:
    * Wheel over detail scrolls 3 lines per notch; wheel over steps moves selection.
    */
   handleMouse(event: TuiMouseEvent): TuiMouseEventResult | undefined {

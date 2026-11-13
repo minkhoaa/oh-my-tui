@@ -39,7 +39,7 @@ test("all imported types use native fullscreen pipeline through commands; switch
   try {
     globalThis.fetch = (() => { throw new Error("No network permitted"); }) as any;
     configStore.init(dir); configStore.setAnimationOverride("reducedMotion", "normal");
-    setActiveTheme("codex-inspired");
+    setActiveTheme("omt-clean");
     omt({ registerFlag() {}, registerToolRenderer() {}, registerCommand(name: string, registered: unknown) { if (name === "omt") command = registered; }, on(name: string, handler: Function) { events.set(name, handler); }, getFlag() {} } as any);
     image(join(dir, "two  spaces.png")); image(join(dir, "animation.gif"), true);
     writeFileSync(join(dir, "scene.json"), JSON.stringify({ version: 1, type: "scene", name: "Terminal stars", scene: { layers: [{ scene: "starfield" }, { scene: "particles" }] } }));
@@ -90,7 +90,7 @@ test("all imported types use native fullscreen pipeline through commands; switch
       assert.equal(tui.getScreenLines().length, 16); assert(tui.getScreenLines().every(row => visibleWidth(row) <= 40));
       terminal.columns = 80; terminal.rows = 24;
       await command.handler("theme native", ctx); assert.equal(motionCoordinator.hasActive(), false);
-      await command.handler("theme codex", ctx); native.doRender();
+      await command.handler("theme clean", ctx); native.doRender();
     }
     await command.handler("background fps 5", ctx); assert.equal(configStore.getBackground().fps, 5);
     await command.handler("background fit tile", ctx); assert.equal(configStore.getBackground().fit, "tile");
@@ -119,14 +119,14 @@ test("settings picker previews all types, assigns per-preset and persists contro
   const noOp = { on: () => "", off: () => "", applyTheme() {} };
   const theme = { fg: (_: string, text: string) => text, bold: (text: string) => text, dim: (text: string) => text } as any;
   try {
-    configStore.init(dir); setActiveTheme("codex-inspired");
+    configStore.init(dir); setActiveTheme("omt-clean");
     image(join(dir, "image.png"));
     const asset = await configStore.assets.importFile(join(dir, "image.png"));
     const settings = createSettingsComponent({ requestRender() {} }, theme, {} as any, () => {}, ctx, { editor: noOp, messages: noOp, tools: noOp, footer: noOp, thinking: noOp, background: control, applyTheme: () => "" });
     const list = (settings as any).children[3];
     const activate = (id: string) => { list.selectItem(id); settings.handleInput("\r"); };
     activate("background-assignment"); activate("background-asset");
-    assert.equal(configStore.getBackground().presetAssets["codex-inspired"], asset.id);
+    assert.equal(configStore.getBackground().presetAssets["omt-clean"], asset.id);
     assert(settings.render(80).join("\n").includes("▀"), "settings includes a real image preview");
     assert.equal(configStore.getBackground().textureScale, 1);
     activate("background-texture-scale");

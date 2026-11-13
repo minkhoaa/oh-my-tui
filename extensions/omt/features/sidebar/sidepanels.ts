@@ -378,7 +378,7 @@ function warnStyle(theme: Theme | undefined, text: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// 15 Section Renderers: Line-by-line Go OMT mapping
+// 15 Section Renderers
 // ---------------------------------------------------------------------------
 
 // 1. PET SECTION

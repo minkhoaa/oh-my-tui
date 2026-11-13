@@ -45,12 +45,12 @@ function createTestState(): SidebarState {
       firstPrompt: "Fix dashboard parity",
     },
     model: {
-      label: "claude-3-7-sonnet",
+      label: "fixture-sonnet-37",
       thinkLevel: "medium",
       thinkLevels: ["off", "low", "medium", "high"],
     },
     recentModels: [
-      { id: "claude-3-7-sonnet", label: "claude-3-7-sonnet", isCurrent: true },
+      { id: "fixture-sonnet-37", label: "fixture-sonnet-37", isCurrent: true },
       { id: "gpt-4o", label: "gpt-4o", isCurrent: false },
     ],
     context: {

@@ -11,7 +11,7 @@ import { gunzipSync } from "node:zlib";
 
 const root = fileURLToPath(new URL("../", import.meta.url));
 const manifest = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
-const publicFiles = ["package.json", "README.md", "LICENSE"];
+const publicFiles = ["package.json", "README.md", "LICENSE", "NOTICE"];
 
 function sourceFiles(dir: string): string[] {
   return readdirSync(join(root, dir), { withFileTypes: true }).flatMap(entry => {

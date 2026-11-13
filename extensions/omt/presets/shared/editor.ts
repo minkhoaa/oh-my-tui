@@ -1,13 +1,13 @@
 // Shared native editor geometry and preset decorations.
 import { CustomEditor, type KeybindingsManager, type Theme } from "@earendil-works/pi-coding-agent";
 import { CURSOR_MARKER, renderFakeCursor, stripTerminalSequences, type EditorTheme, type TerminalColors, type TUI, type TuiMouseEvent, type TuiMouseEventResult } from "@earendil-works/pi-tui";
-import { contentPadding, isCodexTheme, isOpenCodeTheme, isClaudeTheme, isSignatureTheme, omtStyle, quiet } from "./style.ts";
+import { contentPadding, isCleanTheme, isRailTheme, isEmberTheme, isSignatureTheme, omtStyle, quiet } from "./style.ts";
 import { getActiveTheme } from "../../core/theme.ts";
-import { primeCodexPalette, queryCodexPalette } from "../codex-inspired/rendering.ts";
-import { openCodeEditor } from "../opencode-inspired/editor.ts";
-import { codexEditor } from "../codex-inspired/editor.ts";
+import { primeCleanPalette, queryCleanPalette } from "../omt-clean/rendering.ts";
+import { railEditor } from "../omt-rail/editor.ts";
+import { cleanEditor } from "../omt-clean/editor.ts";
 import { promptEditor } from "./editor-prompt.ts";
-import { claudeEditor, claudeEditorBorder } from "../claude-code-inspired/editor.ts";
+import { emberEditor, emberEditorBorder } from "../omt-ember/editor.ts";
 import { signatureEditor, signatureEditorBorder, signatureEditorStatusline, formatSignatureHints, formatSignatureStatsLine, type SignatureEditorOptions, type SignatureStatuslineData } from "../omt-signature/editor.ts";
 import type { SignatureColorRole } from "../omt-signature/rendering.ts";
 
@@ -44,10 +44,10 @@ export class CleanEditor extends CustomEditor {
     this.repaint = () => tui.requestRender();
     this.queryPalette = () => {
       const colors = terminalColors();
-      if (colors) primeCodexPalette(tui, colors);
-      else queryCodexPalette(tui);
+      if (colors) primeCleanPalette(tui, colors);
+      else queryCleanPalette(tui);
     };
-    if (isCodexTheme(getActiveTheme())) this.queryPalette();
+    if (isCleanTheme(getActiveTheme())) this.queryPalette();
 
     // Dynamic own-property descriptor: active only for omt-signature
     Object.defineProperty(this, "embedWorkingStatus", {
@@ -136,7 +136,7 @@ export class CleanEditor extends CustomEditor {
     const active = getActiveTheme();
     const effectivePadding = isSignatureTheme(active) ? Math.max(4, contentPadding(this.nativePadding)) : contentPadding(this.nativePadding);
     super.setPaddingX(effectivePadding);
-    if (isCodexTheme(active)) this.queryPalette();
+    if (isCleanTheme(active)) this.queryPalette();
     this.invalidate();
     this.repaint();
   }
@@ -162,7 +162,7 @@ export class CleanEditor extends CustomEditor {
   private frame(border: string, position?: "top" | "bottom", width?: number): string {
     const active = getActiveTheme();
     if (active.editor.frame === "native") return border;
-    if (isClaudeTheme(active)) return claudeEditorBorder(this.palette(), stripTerminalSequences(border));
+    if (isEmberTheme(active)) return emberEditorBorder(this.palette(), stripTerminalSequences(border));
     if (isSignatureTheme(active)) {
       const statusData = this.getSignatureStatuslineData();
       const isWorking = Boolean(
@@ -287,12 +287,12 @@ export class CleanEditor extends CustomEditor {
     }
 
     const data = { lines, width, boxHeight, padding: this.getPaddingX(), text: this.getText(), metadata: this.metadata() };
-    return isOpenCodeTheme(active)
-      ? openCodeEditor(theme, data)
-      : isCodexTheme(active)
-        ? codexEditor(theme, data)
-        : isClaudeTheme(active)
-          ? claudeEditor(theme, data)
+    return isRailTheme(active)
+      ? railEditor(theme, data)
+      : isCleanTheme(active)
+        ? cleanEditor(theme, data)
+        : isEmberTheme(active)
+          ? emberEditor(theme, data)
           : promptEditor(theme, data);
   }
 }

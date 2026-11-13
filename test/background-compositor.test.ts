@@ -111,7 +111,7 @@ test("full control uses no widget, pauses scheduling for focus/images/overlays a
   configStore.init();
   configStore.setAnimationOverride("mode", "subtle");
   configStore.setAnimationOverride("reducedMotion", "normal");
-  setActiveTheme("codex-inspired");
+  setActiveTheme("omt-clean");
   try {
     assert.match(control.setMode("full", ctx), /Native alternate-screen viewport/);
     host.doRender();

@@ -164,7 +164,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   assert.equal(editor, foreign, "off must not clear a later editor owner");
   await session.prompt("/omt editor on");
   assert.equal(editor, foreign, "on must yield to an existing editor");
-  await session.prompt("/omt theme opencode");
+  await session.prompt("/omt theme rail");
   assert.equal(notifications.at(-1)![1], "warning");
   assert.match(notifications.at(-1)![0], /Native fallback:.*another extension owns the editor/);
   assert.equal(editor, foreign, "theme changes must not reclaim a foreign editor");
@@ -241,9 +241,9 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   const themeCompletions = await omtCmd.getArgumentCompletions!("theme");
   assert.deepEqual(themeCompletions, [
     { value: "theme omt-signature", label: "theme omt-signature" },
-    { value: "theme codex-inspired", label: "theme codex-inspired" },
-    { value: "theme claude-code-inspired", label: "theme claude-code-inspired" },
-    { value: "theme opencode-inspired", label: "theme opencode-inspired" },
+    { value: "theme omt-clean", label: "theme omt-clean" },
+    { value: "theme omt-ember", label: "theme omt-ember" },
+    { value: "theme omt-rail", label: "theme omt-rail" },
     { value: "theme minimal", label: "theme minimal" },
     { value: "theme native", label: "theme native" },
   ]);
@@ -255,7 +255,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
     await session.prompt("/omt preset"); // Explicit status query remains supported.
   };
   await readThemeStatus();
-  const defaultThemeStatus = "OMT theme: omt-signature. Available: omt-signature, codex-inspired, claude-code-inspired, opencode-inspired, minimal, native";
+  const defaultThemeStatus = "OMT theme: omt-signature. Available: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native";
   assert.deepEqual(notifications.at(-1), [defaultThemeStatus, "info"]);
 
   await session.prompt("/omt theme omt");
@@ -263,19 +263,19 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   assert.equal(hiddenThinkingLabel, "Reasoning");
   assert.deepEqual(workingIndicator, signatureIndicator);
 
-  await session.prompt("/omt theme claude");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to claude-code-inspired.", "info"]);
+  await session.prompt("/omt theme ember");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-ember.", "info"]);
   assert.equal(hiddenThinkingLabel, "∴ Thought");
   assert.deepEqual(workingIndicator, { frames: ["·", "·", "·", "·", "✢", "*", "✶", "✻", "✻", "✽", "✽", "✽", "✽", "✻", "✶", "*", "✢", "✢"], intervalMs: 112 });
-  await session.prompt("/omt theme claude-code-inspired");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to claude-code-inspired.", "info"]);
+  await session.prompt("/omt theme omt-ember");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-ember.", "info"]);
 
-  await session.prompt("/omt theme opencode");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to opencode-inspired.", "info"]);
+  await session.prompt("/omt theme rail");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-rail.", "info"]);
   assert.equal(hiddenThinkingLabel, "+ Thought");
   assert.deepEqual(workingIndicator, { frames: ["■", "⬝"], intervalMs: 40 });
-  await session.prompt("/omt theme opencode-inspired");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to opencode-inspired.", "info"]);
+  await session.prompt("/omt theme omt-rail");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-rail.", "info"]);
 
   await session.prompt("/omt theme minimal");
   assert.deepEqual(notifications.at(-1), ["OMT theme set to minimal.", "info"]);
@@ -290,41 +290,43 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   assert.equal(hiddenThinkingLabel, "Thinking...", "native preset restores native thinking label");
   assert.equal(workingIndicator, undefined, "native preset restores native indicator");
 
-  // Switching back to codex-inspired restores OMT components
-  await session.prompt("/omt theme codex-inspired");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to codex-inspired.", "info"]);
-  assert.notEqual(editor, undefined, "codex restores clean editor");
-  assert.notEqual(footer, undefined, "codex restores clean footer");
+  // Switching back to omt-clean restores OMT components
+  await session.prompt("/omt theme omt-clean");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-clean.", "info"]);
+  assert.notEqual(editor, undefined, "clean restores clean editor");
+  assert.notEqual(footer, undefined, "clean restores clean footer");
   assert.equal(hiddenThinkingLabel, "Reasoning");
   assert.deepEqual(workingIndicator, { frames: ["•", "◦"], intervalMs: 32 });
 
-  // Backward-compatible alias 'codex' also switches to codex-inspired
-  await session.prompt("/omt theme claude");
-  await session.prompt("/omt theme codex");
-  assert.deepEqual(notifications.at(-1), ["OMT theme set to codex-inspired.", "info"]);
+  // Backward-compatible alias 'clean' also switches to omt-clean
+  await session.prompt("/omt theme ember");
+  await session.prompt("/omt theme clean");
+  assert.deepEqual(notifications.at(-1), ["OMT theme set to omt-clean.", "info"]);
   assert.equal(hiddenThinkingLabel, "Reasoning");
   assert.deepEqual(workingIndicator, { frames: ["•", "◦"], intervalMs: 32 });
-  const codexMessage = render();
-  assert.deepEqual(render(), codexMessage, "legacy alias retains canonical message rendering");
+  const canonicalCleanMessage = render();
+  assert.deepEqual(render(), canonicalCleanMessage, "legacy alias retains canonical message rendering");
   await session.prompt("/omt theme omt-signature");
-  assert.deepEqual(render(), cleanMessage, "signature preset restores clean message");
+  const signatureMessage = render();
+  assert.notDeepEqual(signatureMessage, canonicalCleanMessage, "signature preset applies its own message presentation");
+  assert.ok(signatureMessage.join("\n").includes("╭"));
   await readThemeStatus();
   assert.deepEqual(notifications.at(-1), [defaultThemeStatus, "info"]);
   for (const name of ["unknown", "constructor", "toString", "__proto__"]) {
     const currentEditor: Factory = editor;
     const currentFooter: FooterFactory = footer;
     await session.prompt(`/omt theme ${name}`);
-    assert.deepEqual(notifications.at(-1), [`Unknown theme: ${name}. Available themes: omt-signature, codex-inspired, claude-code-inspired, opencode-inspired, minimal, native`, "info"]);
+    assert.deepEqual(notifications.at(-1), [`Unknown theme: ${name}. Available themes: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native`, "info"]);
     assert.equal(editor, currentEditor);
     assert.equal(footer, currentFooter);
-    assert.deepEqual(render(), cleanMessage);
+    assert.deepEqual(render(), signatureMessage);
   }
 
   // Theme selection is persisted by default: reload retains the selected theme.
   await session.prompt("/omt theme minimal");
   await session.reload();
   await readThemeStatus();
-  assert.deepEqual(notifications.at(-1), ["OMT theme: minimal. Available: omt-signature, codex-inspired, claude-code-inspired, opencode-inspired, minimal, native", "info"]);
+  assert.deepEqual(notifications.at(-1), ["OMT theme: minimal. Available: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native", "info"]);
   assert.equal(hiddenThinkingLabel, "Thinking");
   assert.deepEqual(workingIndicator, { frames: ["·"] });
   await session.prompt("/omt theme omt-signature");
@@ -332,11 +334,11 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   // Preserving independent toggles across theme switches
   await session.prompt("/omt editor off");
   assert.equal(editor, undefined);
-  await session.prompt("/omt theme claude");
+  await session.prompt("/omt theme ember");
   assert.equal(editor, undefined, "editor stays off after theme switch");
   await session.prompt("/omt editor on");
   assert.notEqual(editor, undefined, "turning editor on restores it under active theme");
-  await session.prompt("/omt theme codex-inspired");
+  await session.prompt("/omt theme omt-clean");
   // Master toggle: all off and all on
   await session.prompt("/omt all off");
   assert.deepEqual(notifications.at(-1), ["OMT all components off.", "info"]);
@@ -378,22 +380,22 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
 
   // Saved defaults survive reload; only an explicitly supplied flag overrides them.
   const configPath = join(sandbox, "omt.json");
-  await writeFile(configPath, JSON.stringify({ preset: "claude", components: { editor: false } }));
+  await writeFile(configPath, JSON.stringify({ preset: "ember", components: { editor: false } }));
   await session.reload();
   await readThemeStatus();
-  assert.match(notifications.at(-1)![0], /^OMT theme: claude-code-inspired\./);
+  assert.match(notifications.at(-1)![0], /^OMT theme: omt-ember\./);
   assert.equal(hiddenThinkingLabel, "∴ Thought");
   assert.equal(editor, undefined, "saved independent component toggles are respected");
   await session.prompt("/omt theme minimal --session");
   await session.reload();
   assert.equal(hiddenThinkingLabel, "∴ Thought", "session selection does not replace saved defaults");
-  session.extensionRunner.setFlagValue("omt-theme", "codex");
+  session.extensionRunner.setFlagValue("omt-theme", "clean");
   await session.reload();
   assert.equal(hiddenThinkingLabel, "Reasoning", "explicit CLI selection wins over saved preset");
   assert.equal(editor, undefined, "CLI selection does not reset saved component toggles");
   session.extensionRunner.setFlagValue("omt-theme", "not-a-preset");
   await session.reload();
-  assert.deepEqual(notifications.at(-1), ["Unknown OMT startup theme: not-a-preset. Using claude-code-inspired.", "warning"]);
+  assert.deepEqual(notifications.at(-1), ["Unknown OMT startup theme: not-a-preset. Using omt-ember.", "warning"]);
   session.extensionRunner.setFlagValue("omt-theme", undefined as any);
   await session.reload();
   assert.equal(hiddenThinkingLabel, "∴ Thought", "removing CLI override restores saved preset");
@@ -410,7 +412,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   assert.deepEqual(notifications.at(-1), ["Plain ASCII borders enabled.", "info"]);
 
   // Native flag resolution precedes the first OMT mount, including reload.
-  for (const [flag, selected, label] of [["opencode", "opencode-inspired", "+ Thought"], ["claude", "claude-code-inspired", "∴ Thought"], ["native", "native", "Thinking..."]] as const) {
+  for (const [flag, selected, label] of [["rail", "omt-rail", "+ Thought"], ["ember", "omt-ember", "∴ Thought"], ["native", "native", "Thinking..."]] as const) {
     session.extensionRunner.setFlagValue("omt-theme", flag);
     await session.reload();
     assert.equal(hiddenThinkingLabel, label);

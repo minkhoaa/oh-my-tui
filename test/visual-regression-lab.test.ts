@@ -47,19 +47,19 @@ test("renders first-frame fixtures across all 5 presets with distinct visual sig
 
   // Presets must produce distinct outputs
   assert.notEqual(
-    renderedPresets["codex-inspired"],
-    renderedPresets["claude-code-inspired"],
-    "Codex and Claude must render distinct chrome"
+    renderedPresets["omt-clean"],
+    renderedPresets["omt-ember"],
+    "Clean and Ember must render distinct chrome"
   );
   assert.notEqual(
-    renderedPresets["claude-code-inspired"],
-    renderedPresets["opencode-inspired"],
-    "Claude and OpenCode must render distinct chrome"
+    renderedPresets["omt-ember"],
+    renderedPresets["omt-rail"],
+    "Ember and Rail must render distinct chrome"
   );
   assert.notEqual(
-    renderedPresets["opencode-inspired"],
+    renderedPresets["omt-rail"],
     renderedPresets["minimal"],
-    "OpenCode and Minimal must render distinct chrome"
+    "Rail and Minimal must render distinct chrome"
   );
   assert.notEqual(
     renderedPresets["minimal"],
@@ -224,12 +224,12 @@ test("renders message fixtures with preset-specific prompt glyphs and roles", ()
     assert.ok(plain.includes(assistantText), `${preset} must include assistant response`);
 
     // Verify preset prompt glyphs
-    if (preset === "codex-inspired") {
-      assert.ok(plain.includes("›"), "Codex must feature › indicator");
-    } else if (preset === "claude-code-inspired") {
-      assert.ok(plain.includes("❯"), "Claude must feature ❯ indicator");
-    } else if (preset === "opencode-inspired") {
-      assert.ok(plain.includes("┃"), "OpenCode must feature vertical rail ┃");
+    if (preset === "omt-clean") {
+      assert.ok(plain.includes("›"), "Clean must feature › indicator");
+    } else if (preset === "omt-ember") {
+      assert.ok(plain.includes("❯"), "Ember must feature ❯ indicator");
+    } else if (preset === "omt-rail") {
+      assert.ok(plain.includes("┃"), "Rail must feature vertical rail ┃");
     }
   }
 
@@ -317,13 +317,13 @@ test("terminal resize states adapt without horizontal overflow across 120, 80, 4
 // ============================================================================
 
 test("compareRender detects identical renders and reports passed", () => {
-  const fixture = createDeterministicFixture("match-check", "codex-inspired", "message", 80);
+  const fixture = createDeterministicFixture("match-check", "omt-clean", "message", 80);
   const ansi = renderFixtureState(fixture);
 
   const result = compareRender(fixture, ansi, ansi);
   assert.equal(result.passed, true);
   assert.equal(result.fixtureName, "match-check");
-  assert.equal(result.preset, "codex-inspired");
+  assert.equal(result.preset, "omt-clean");
   assert.equal(result.width, 80);
   assert.equal(result.diffSummary, undefined);
   assert.equal(result.actualAnsi, ansi);
@@ -333,7 +333,7 @@ test("compareRender detects identical renders and reports passed", () => {
 test("compareRender detects simulated regressions and produces an actionable line diff report", () => {
   const fixture = createDeterministicFixture(
     "tool-regression-check",
-    "claude-code-inspired",
+    "omt-ember",
     "tool",
     80,
     { tool: "read" }
@@ -348,7 +348,7 @@ test("compareRender detects simulated regressions and produces an actionable lin
   const result = compareRender(fixture, actualAnsiWithRegression, expectedAnsi);
   assert.equal(result.passed, false, "compareRender must detect the simulated difference");
   assert.equal(result.fixtureName, "tool-regression-check");
-  assert.equal(result.preset, "claude-code-inspired");
+  assert.equal(result.preset, "omt-ember");
   assert.equal(result.width, 80);
 
   // Verify actionable diff summary
@@ -358,7 +358,7 @@ test("compareRender detects simulated regressions and produces an actionable lin
     "diffSummary must mention fixture name"
   );
   assert.ok(
-    result.diffSummary.includes("claude-code-inspired"),
+    result.diffSummary.includes("omt-ember"),
     "diffSummary must mention preset"
   );
   assert.ok(
@@ -380,7 +380,7 @@ test("compareRender detects simulated regressions and produces an actionable lin
 });
 
 test("compareRender handles multi-line length discrepancies (EOF differences)", () => {
-  const fixture = createDeterministicFixture("eof-check", "opencode-inspired", "tool", 40);
+  const fixture = createDeterministicFixture("eof-check", "omt-rail", "tool", 40);
   const expected = "line 1\nline 2\nline 3";
   const actual = "line 1\nline 2";
 
@@ -412,14 +412,14 @@ test("formatRegressionReport formats actionable failure sections with diffs", ()
     {
       passed: false,
       fixtureName: "broken-editor",
-      preset: "codex-inspired",
+      preset: "omt-clean",
       width: 40,
       diffSummary: "Line 2:\n  - expected: \"foo\"\n  + actual:   \"bar\"",
     },
     {
       passed: true,
       fixtureName: "good-tool",
-      preset: "claude-code-inspired",
+      preset: "omt-ember",
       width: 80,
     },
   ];
@@ -427,7 +427,7 @@ test("formatRegressionReport formats actionable failure sections with diffs", ()
 
   assert.ok(report.includes("1/2 passed (1 failed)"));
   assert.ok(report.includes("FAIL: broken-editor"));
-  assert.ok(report.includes("Preset: codex-inspired | Width: 40"));
+  assert.ok(report.includes("Preset: omt-clean | Width: 40"));
   assert.ok(report.includes("- expected: \"foo\""));
   assert.ok(report.includes("+ actual:   \"bar\""));
 });
@@ -460,9 +460,9 @@ test("baseline store contains recorded fixtures and keys are well-formed", () =>
   const keys = Object.keys(baselines);
   assert.ok(keys.length >= 180, "Baselines store must have at least 180 fixtures");
 
-  const sampleFixture = createDeterministicFixture("diff", "opencode-inspired", "diff", 80);
+  const sampleFixture = createDeterministicFixture("diff", "omt-rail", "diff", 80);
   const key = getFixtureKey(sampleFixture);
-  assert.equal(key, "opencode-inspired/diff/diff/80");
+  assert.equal(key, "omt-rail/diff/diff/80");
   assert.ok(key in baselines, `Expected key ${key} to be present in baselines`);
 
   const baseline = getBaseline(sampleFixture);
@@ -471,9 +471,9 @@ test("baseline store contains recorded fixtures and keys are well-formed", () =>
 
 test("supported constants contain all required presets and states", () => {
   for (const preset of [
-    "codex-inspired",
-    "claude-code-inspired",
-    "opencode-inspired",
+    "omt-clean",
+    "omt-ember",
+    "omt-rail",
     "minimal",
     "native",
   ]) {

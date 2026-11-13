@@ -1,7 +1,7 @@
 // Native render/cache ownership boundary. Preset layouts and attribution live in presets/.
 import { UserMessageComponent, InteractiveMode, type Theme } from "@earendil-works/pi-coding-agent";
 import { getActiveTheme } from "../../core/theme.ts";
-import { isOpenCodeTheme, isClaudeTheme } from "../../presets/shared/style.ts";
+import { isRailTheme, isEmberTheme } from "../../presets/shared/style.ts";
 import { userMessageLayout } from "../../presets/shared/user-message.ts";
 import { observeAssistantMessages } from "../../core/native-ui.ts";
 
@@ -84,8 +84,8 @@ export function createUserMessageControl(palette: () => Theme = () =>
       invalidateAll();
       const active = getActiveTheme();
       if (active.id === "native") return "OMT user messages on (native presentation).";
-      if (isClaudeTheme(active)) return "OMT user messages on (Claude prompt surfaces).";
-      return isOpenCodeTheme(active) ? "OMT user messages on (rail panels)." : "OMT user messages on (native theme background).";
+      if (isEmberTheme(active)) return "OMT user messages on (Ember prompt surfaces).";
+      return isRailTheme(active) ? "OMT user messages on (rail panels)." : "OMT user messages on (native theme background).";
     },
     off() {
       enabled = false;

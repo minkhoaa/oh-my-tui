@@ -1,0 +1,11 @@
+# Changelog
+
+## [0.1.0] - 2026-11-10
+
+- Five presentation presets: Codex Inspired, Claude Code Inspired, OpenCode Inspired, Minimal and Native.
+- Composer, message, tool, statusline and progress styling.
+- Settings, command palette, conversation navigation and tool inspection.
+- Git changes, session browsing, conversation export and branch navigation.
+- Draft management, prompt queue views, notifications and diagnostics.
+- Accessibility options, focus layouts and transcript browsing.
+- Procedural scenes and imported image/animation backgrounds.

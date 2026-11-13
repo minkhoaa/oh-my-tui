@@ -1,0 +1,214 @@
+{
+  "version": 1,
+  "backgrounds": [
+    {
+      "alias": "moonlit",
+      "source": "docs/moonlit.gif",
+      "framesSha256": "84ad6dfa33e790aefdaa298a3ef388f7cdf999ad38b7fd8b64910495d8ebe6f1",
+      "metadata": {
+        "version": 1,
+        "id": "ffcac98ac467e5ae84a4a591b0eb74b9dab42da3b11a922f7a948b0763e45e31",
+        "name": "Moonlit",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 558715,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "cloud-drift",
+      "source": "docs/cloud-drift.gif",
+      "framesSha256": "9e17bf6ea75694e952f4d9523303df513bafb96d2254355c3c277b42f1cec90f",
+      "metadata": {
+        "version": 1,
+        "id": "0e510bdcc47eb90cf2fa0f5570a86ed2a3f551e18d0b08ca45a293a154adf812",
+        "name": "Cloud Drift",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 1142629,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "honu-lagoon",
+      "source": "docs/honu-lagoon.gif",
+      "framesSha256": "9a696273411ab8d9ef4a5fa6e337c68a58b4956f9e2dd705edf13f1e67977188",
+      "metadata": {
+        "version": 1,
+        "id": "682d774668506b1a94362fa33f7ac58ba5b97707a487df72aad1754c87d77a83",
+        "name": "Honu Lagoon",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 345786,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "koi-pond",
+      "source": "docs/koi-pond.gif",
+      "framesSha256": "62ed52ce716199304efc4f0a0326a92bd8d5e7b605a4ecaf3bd16fa5b10eb727",
+      "metadata": {
+        "version": 1,
+        "id": "66146b9165c65e4023e9b52f9c4b8a27c01122e73b8aa3a8341075426715da8b",
+        "name": "Koi Pond",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 584054,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "jellyfish",
+      "source": "docs/jellyfish.gif",
+      "framesSha256": "4b9f59dcb60b7bef101286ad110074cefe491de794b2265cafcb1f04cd46e464",
+      "metadata": {
+        "version": 1,
+        "id": "222ac02b85615211803ec625cbf6a3fd4154375f369e605acf13e5e40f6e36d1",
+        "name": "Jellyfish",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 783902,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "lantern-night",
+      "source": "docs/lantern-night.gif",
+      "framesSha256": "60d134778e268a7380f5f8da86c5a98fe0a7238ddd90262c475026ac0d256a81",
+      "metadata": {
+        "version": 1,
+        "id": "7bbff9f7013843e297b7d100ea44d201f8075f97f7585fed40e718c8c7454648",
+        "name": "Lantern Night",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 1016391,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "fireflies",
+      "source": "docs/fireflies.gif",
+      "framesSha256": "590256aab1c20a0b135dbf189f1de9f1ee4e0da87b9e9dd8d89a7f21ea45d9ac",
+      "metadata": {
+        "version": 1,
+        "id": "cb25b2f915f3f24aa32c6da01290ac7378e37f69caa6577f8ba7a6ef1c6e788a",
+        "name": "Fireflies",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 1182918,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "neon-rain",
+      "source": "docs/neon-rain.gif",
+      "framesSha256": "25e537a2a05c5584515f34535f64d36f8a6bec29b09024c2279af64665bcecef",
+      "metadata": {
+        "version": 1,
+        "id": "bc0d2be67532f411ab30669311c5ba6bf829de5912cec14566eff354314e1df4",
+        "name": "Neon Rain",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 334446,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "sakura-dusk",
+      "source": "docs/sakura-dusk.gif",
+      "framesSha256": "f1f3c521fd1902ddbaa8d5f1fbc50ed0b4bce0d1fc5fc796545bbc272870926e",
+      "metadata": {
+        "version": 1,
+        "id": "844b6f6ae3eea05d8dea45f27c60dfc6da48f70add065e95bb1c4d57009d6079",
+        "name": "Sakura Dusk",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 453135,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "snow-cabin",
+      "source": "docs/snow-cabin.gif",
+      "framesSha256": "c7adffa45a30b6ec0701dbf18e485b48ecc0b4279a04c5290814618450e7b2e9",
+      "metadata": {
+        "version": 1,
+        "id": "3255c23dc6a8ddba0ab0dfa8ac60fab4853e9415c36fe3b15d6a5f505bb996f5",
+        "name": "Snow Cabin",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 198710,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    },
+    {
+      "alias": "star-voyage",
+      "source": "docs/star-voyage.gif",
+      "framesSha256": "8d0201efb222e38612fb0ec4dcfd4b3240d039786168ab996d19a69ef0545851",
+      "metadata": {
+        "version": 1,
+        "id": "3d09c99598f43cdd2bbd9ce0e2bd769df6e6189477873f30a33660d9824a317b",
+        "name": "Star Voyage",
+        "kind": "animation",
+        "format": "gif",
+        "sourceBytes": 193901,
+        "width": 160,
+        "height": 90,
+        "frameCount": 40,
+        "frameMs": 100,
+        "loops": 0,
+        "importedAt": "2026-11-09T10:08:07+07:00"
+      }
+    }
+  ]
+}

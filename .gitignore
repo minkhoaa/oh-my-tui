@@ -1,0 +1,16 @@
+node_modules/
+*.tgz
+*.tsbuildinfo
+coverage/
+.cache/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+/.pi/
+
+# Local media experiments; fixture/evidence images remain trackable.
+/*.gif
+/*.png

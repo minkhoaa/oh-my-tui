@@ -1,0 +1,11 @@
+export { createBackgroundControl, OMT_BACKGROUND_WIDGET_ID, OMT_BACKGROUND_BELOW_WIDGET_ID } from "./integration.ts";
+export type { BackgroundControl, BackgroundStats } from "./integration.ts";
+export { renderManagedBackground, managedBackgroundMoves } from "./managed.ts";
+export * from "./capabilities/index.ts";
+export * from "./assets/index.ts";
+export * from "./assets/manifest.ts";
+export * from "./scenes/index.ts";
+export * from "./compositor/index.ts";
+export * from "./motion/index.ts";
+export * from "./renderers/cell.ts";
+export * from "./renderers/chafa.ts";

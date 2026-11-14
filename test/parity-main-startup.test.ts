@@ -52,6 +52,7 @@ test("Signature startup suppresses only native listings, preserves diagnostics/f
     let enabled = true;
     dispose = installNativeStartupPresentation(f.ui, () => enabled);
     assert.ok(dispose);
+    assert.equal(installNativeStartupPresentation(f.ui, () => false), dispose, "a replacement session adopts the existing owned filter");
     const shown = f.resources.render(80).map(stripTerminalSequences);
     assert.ok(!shown.join("\n").includes("[Skills]"));
     assert.ok(!shown.join("\n").includes("[Extensions]"));

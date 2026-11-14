@@ -340,7 +340,7 @@ test("CleanHeaderComponent renders compact visual identity without horizontal ov
   const wideText = wideLines.map(stripTerminalSequences).join("\n");
   assert.ok(wideText.includes("OMT"));
   assert.ok(wideText.includes("Resources"));
-  assert.ok(wideText.includes("New session started"));
+  assert.ok(!wideText.includes("New session started"), "Pi's native session-start row must not be duplicated in the OMT header");
 
   for (const width of [120, 80, 60, 40, 20]) {
     const lines = emptyHeader.render(width);

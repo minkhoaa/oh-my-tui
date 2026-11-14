@@ -73,6 +73,9 @@ export function createHostThemeControl() {
   let yielded = false;
   let serial = 0;
   return {
+    isOwned(ctx: ExtensionContext): boolean {
+      try { return !!owned && fingerprint(ctx.ui.theme) === owned; } catch { return false; }
+    },
     refresh(ctx: ExtensionContext, enabled: boolean, claim = false): string | undefined {
       if (!ctx.hasUI) return;
       try {

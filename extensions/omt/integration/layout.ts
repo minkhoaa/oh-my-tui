@@ -7,6 +7,14 @@ import type { SidebarControl, SidebarState } from "../features/sidebar/types.ts"
 import type { FleetChild } from "../features/agent-fleet/index.ts";
 
 type DockComponent = Component & { dispose?(): void };
+const mountedLayouts = new WeakMap<object, () => void>();
+
+function viewportKey(ctx: ExtensionContext): object | undefined {
+  const getter = (ctx.ui as ExtensionContext["ui"] & {
+    getNativeViewportPresentation?(): { tui?: object } | undefined;
+  }).getNativeViewportPresentation;
+  return typeof getter === "function" ? getter.call(ctx.ui)?.tui : undefined;
+}
 type DockSource = Pick<SidebarControl, "getState" | "isEnabled"> & {
   setDocked?(docked: boolean, ctx?: ExtensionContext): void;
 };
@@ -26,6 +34,7 @@ export function createSignatureLayoutControl(
   let binding: ReturnType<typeof installNativeViewportPresentation>;
   let component: DockComponent | undefined;
   let context: ExtensionContext | undefined;
+  let layoutKey: object | undefined;
   let generation = 0;
   let issue: string | undefined;
 
@@ -39,21 +48,25 @@ export function createSignatureLayoutControl(
     binding = undefined;
     component = undefined;
     context = undefined;
+    if (layoutKey && mountedLayouts.get(layoutKey) === release) mountedLayouts.delete(layoutKey);
+    layoutKey = undefined;
     oldBinding?.dispose();
     oldComponent?.dispose?.();
-    if (previous) sidebar.setDocked?.(false, previous);
+    if (previous) sidebar.setDocked?.(false);
   }
 
   return {
     async refresh(ctx: ExtensionContext): Promise<boolean> {
       const epoch = ++generation;
+      const key = viewportKey(ctx);
       if (!requested(ctx)) {
         release();
+        if (key) mountedLayouts.get(key)?.();
         issue = undefined;
         return false;
       }
       if (binding?.owned() && context === ctx) return true;
-      release();
+      const tuiMode = ctx.mode === "tui" && ctx.hasUI;
       let factory: SidebarDockFactory | undefined;
       try {
         factory = await loadDock();
@@ -66,6 +79,11 @@ export function createSignatureLayoutControl(
         issue = "Signature dock unavailable: sidebar presentation factory missing.";
         return false;
       }
+      if (epoch !== generation || !requested(ctx)) return false;
+      // When Pi replaces a session, retain the old OMT root until the new dock is
+      // ready, then swap synchronously so the native splash is never exposed.
+      release();
+      if (key) mountedLayouts.get(key)?.();
       let candidate: DockComponent | undefined;
       let next: ReturnType<typeof installNativeViewportPresentation>;
       try {
@@ -74,7 +92,8 @@ export function createSignatureLayoutControl(
           return new HStack([
             { component: nativeRoot, basis: 0, grow: 1, shrink: 1, minSize: 1 },
             { component: candidate, basis: 34, grow: 0, shrink: 0, minSize: 34, maxSize: 34,
-              visible: viewport => viewport.width >= 80 && requested(ctx) },
+              visible: viewport => viewport.width >= 80 && tuiMode
+                && getActiveTheme().id === "omt-signature" && sidebar.isEnabled() },
           ]);
         });
       } catch (error) {
@@ -90,6 +109,8 @@ export function createSignatureLayoutControl(
       binding = next;
       component = candidate;
       context = ctx;
+      layoutKey = key;
+      if (key) mountedLayouts.set(key, release);
       sidebar.setDocked?.(true, ctx);
       issue = undefined;
       return true;

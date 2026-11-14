@@ -56,6 +56,39 @@ test("signature layout mounts one real dock and restores native root on preset c
   } finally { control?.cleanup(); restore?.(); resetActiveTheme(); }
 });
 
+test("new-session layout handoff keeps the OMT viewport mounted while the next dock loads", async () => {
+  const restore = observeNativeUIOwnership();
+  setActiveTheme("omt-signature");
+  let previous: ReturnType<typeof createSignatureLayoutControl> | undefined;
+  let current: ReturnType<typeof createSignatureLayoutControl> | undefined;
+  try {
+    const f = fixture();
+    let releaseNext: (() => void) | undefined;
+    let previousDisposed = 0;
+    previous = createSignatureLayoutControl(f.source, async () => () => ({
+      render: () => ["previous sidebar"], invalidate() {}, dispose() { previousDisposed++; },
+    }));
+    assert.equal(await previous.refresh(f.ctx), true);
+    const oldRoot = (f.tui as any).layoutRoot;
+    const nextContext = { ...f.ctx } as ExtensionContext;
+    current = createSignatureLayoutControl(f.source, () => new Promise(resolve => {
+      releaseNext = () => resolve(() => ({ render: () => ["next sidebar"], invalidate() {} }));
+    }));
+
+    const pending = current.refresh(nextContext);
+    await Promise.resolve();
+    assert.equal((f.tui as any).layoutRoot, oldRoot, "keep the previous OMT viewport while lazy UI loads");
+    releaseNext!();
+    assert.equal(await pending, true);
+    const nextRoot = (f.tui as any).layoutRoot;
+    assert.ok(nextRoot instanceof HStack);
+    assert.notEqual(nextRoot, oldRoot);
+    assert.equal(nextRoot.children[0], f.root, "replace old composition with the native root, not a nested dock");
+    assert.equal(previousDisposed, 1);
+    assert.equal(current.isMounted(), true);
+  } finally { current?.cleanup(); previous?.cleanup(); restore?.(); resetActiveTheme(); }
+});
+
 test("a later root owner is never overwritten; a native root restored by its owner may remount", async () => {
   const restore = observeNativeUIOwnership();
   setActiveTheme("omt-signature");

@@ -48,6 +48,7 @@ test("compact owned session header drops only its native trailing gap, preservin
     (f.builtin as any).handleMouse = (event: any) => { clicked = event.y; return { handled: true }; };
     dispose = installNativeHeaderPresentation(f.ui, () => enabled, { compact: true });
     assert.ok(dispose);
+    assert.equal(installNativeHeaderPresentation(f.ui, () => false), dispose, "a replacement session adopts the existing header filter");
     for (const width of [20, 80]) {
       const lines = f.header.render(width).map(l => stripTerminalSequences(l).trimEnd());
       assert.deepEqual(lines, ["BUILTIN_HEADER"]);

@@ -84,7 +84,7 @@ for mode in ("regular", "fullscreen"):
     try:
         (root / "agent").mkdir()
         (root / "home").mkdir()
-        (root / "agent/settings.json").write_text('{"quietStartup":true,"defaultProjectTrust":"no"}')
+        (root / "agent/settings.json").write_text('{"quietStartup":true,"defaultProjectTrust":"never"}')
         env = {
             "PATH": os.environ.get("PATH", "/usr/bin:/bin"),
             "HOME": str(root / "home"),
@@ -140,9 +140,9 @@ for mode in ("regular", "fullscreen"):
             fcntl.ioctl(fd, termios.TIOCSWINSZ, struct.pack("HHHH", rows, cols, 0, 0))
             os.kill(pid, signal.SIGWINCH)
 
-        def command(value):
+        def command(value, settle=0.8):
             os.write(fd, value.encode() + b"\r")
-            drain(0.8)
+            drain(settle)
 
         def step(name, action):
             t0 = time.monotonic()
@@ -158,34 +158,51 @@ for mode in ("regular", "fullscreen"):
         if not (has_welcome_banner and has_composer_marker):
             raise AssertionError("OMT source header/composer markers not observed; refusing to submit possibly unknown commands")
 
-        # 2. Open dashboard and assert presence
+        # 2. Exercise Pi's native /new lifecycle repeatedly, inspecting the ENTIRE
+        # ANSI interval, not just a settled screenshot. Unchanged welcome rows may
+        # correctly remain on screen without being emitted again by the diff renderer.
+        for index in range(3):
+            before_new_session = len(data)
+            step(f"new_session_{index + 1}", lambda: command("/new", 1.0))
+            interval = data[before_new_session:].decode("utf-8", errors="replace")
+            clean_interval = strip_ansi(interval)
+            if index == 0:
+                if "New session started" not in clean_interval or "\x1b[38;2;135;215;135m✓" not in interval:
+                    raise AssertionError("/new did not show the native session-start status with OMT success styling")
+            for native_marker in ("0.0%/0 (auto)", "ctrl+c to clear", "[Extensions]", "[Skills]"):
+                if native_marker in clean_interval:
+                    raise AssertionError(f"/new painted an intermediate native frame: {native_marker}")
+            if re.search(r"\x1b\[38;5;5m✓ New session started", interval):
+                raise AssertionError("/new leaked Pi's native accent-colored session-start row")
+
+        # 3. Open dashboard and assert presence
         step("open_dashboard", lambda: command("/omt sidebar"))
         if b"SESSION" not in data or b"RECENT MODELS" not in data:
             raise AssertionError("dashboard did not render")
 
-        # 3. Scroll through dashboard (exercising local viewport navigation)
+        # 4. Scroll through dashboard (exercising local viewport navigation)
         def scroll_dashboard():
             for _ in range(80):
                 os.write(fd, b"j")
                 drain(0.025)
         step("scroll_dashboard", scroll_dashboard)
 
-        # 4. Cycle pet frames and test narrow resize
+        # 5. Cycle pet frames and test narrow resize
         step("pet_and_narrow_resize", lambda: (os.write(fd, b"p"), resize(40, 22), drain(0.6)))
 
-        # 5. Close dashboard
+        # 6. Close dashboard
         step("close_dashboard", lambda: (os.write(fd, b"q"), drain(0.4)))
 
-        # 6. Companion widget on and medium resize
+        # 7. Companion widget on and medium resize
         step("companion_on", lambda: (command("/omt sidebar on"), resize(80, 30), drain(0.5)))
 
-        # 7. Companion widget off
+        # 8. Companion widget off
         step("companion_off", lambda: command("/omt sidebar off"))
 
-        # 8. Preset switching: native and omt-signature
+        # 9. Preset switching: native and omt-signature
         step("theme_switch", lambda: (command("/omt theme native"), command("/omt theme omt-signature")))
 
-        # 9. Unicode draft input with bracketed paste, then clear with Ctrl+C (never submit)
+        # 10. Unicode draft input with bracketed paste, then clear with Ctrl+C (never submit)
         def draft_and_clear():
             os.write(fd, "\x1b[200~draft 界 é\x1b[201~".encode())
             drain(0.5)
@@ -193,7 +210,7 @@ for mode in ("regular", "fullscreen"):
             drain(0.4)
         step("draft_and_clear", draft_and_clear)
 
-        # 10. Disable OMT and exit Pi cleanly via Ctrl+D
+        # 11. Disable OMT and exit Pi cleanly via Ctrl+D
         step("disable_and_exit", lambda: (command("/omt off"), os.write(fd, b"\x04"), drain(1)))
 
         # Exit is asynchronous; tolerate scheduling latency without retrying keys
@@ -229,6 +246,7 @@ for mode in ("regular", "fullscreen"):
             "steps": steps_log,
             "assertions": [
                 "OMT source header and composer markers observed",
+                "three native /new calls: no native fallback markers in the full ANSI intervals; OMT-styled native status observed",
                 "dashboard rendered (SESSION, RECENT MODELS)",
                 "dashboard scrolled to bottom (WORKSPACE reachable)",
                 "pet frames cycled",

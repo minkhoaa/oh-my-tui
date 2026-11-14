@@ -133,7 +133,7 @@ test("Header parity: empty chat renders single muted session · cwd header follo
     assert.ok(fullText.includes("/ commands · ! bash · ctrl+o more"), "Must contain OMT hints");
     assert.ok(fullText.includes("ready"), "Must contain ready label");
     assert.ok(fullText.includes("Resources"), "Must contain Resources line");
-    assert.ok(fullText.includes("New session started"), "Must contain New session started");
+    assert.ok(!fullText.includes("New session started"), "Must leave Pi's native session-start row to Pi");
 
     // Width containment check across widths
     for (const w of [120, 80, 60, 40, 20]) {

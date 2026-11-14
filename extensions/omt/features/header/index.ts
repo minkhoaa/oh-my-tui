@@ -116,8 +116,10 @@ export class CleanHeaderComponent implements Component {
   }
 
   private renderSignatureHeader(width: number, theme: Theme): string[] {
-    const ctx = this.getCtx();
-    const cwd = ctx?.cwd ? shortenCwd(ctx.cwd) : "";
+    let ctx: ExtensionContext | undefined;
+    try { ctx = this.getCtx(); } catch { /* A retained transition header may outlive its session context. */ }
+    let cwd = "";
+    try { cwd = ctx?.cwd ? shortenCwd(ctx.cwd) : ""; } catch { /* Keep the retained welcome safe until the new session mounts. */ }
     let session = "";
     try {
       session = ctx?.sessionManager?.getSessionName?.() ?? "";
@@ -179,8 +181,6 @@ export class CleanHeaderComponent implements Component {
       signatureFg(theme, "muted", "  ·  builtin ") +
       theme.bold(signatureFg(theme, "text", counts.builtin === undefined ? "—" : String(counts.builtin)));
 
-    const newSess = signatureFg(theme, "green", "✓") + " " + signatureFg(theme, "muted", "New session started");
-
     const logoW = visibleWidth(brandLogo[0] ?? "");
     let detailW = 0;
     for (const d of details) {
@@ -198,9 +198,9 @@ export class CleanHeaderComponent implements Component {
         }
         return row;
       });
-      rows.push("", res, "", newSess);
+      rows.push("", res);
     } else {
-      rows = [...logo, "", ...details, "", res, "", newSess];
+      rows = [...logo, "", ...details, "", res];
     }
 
     // Signature gutter: bullet on its own row, then all five logo rows at one column.
@@ -268,7 +268,8 @@ export function createHeaderControl(pi?: ExtensionAPI): HeaderControl {
       ctx.ui.setHeader(undefined);
       return;
     }
-    const factory = (_tui: TUI, theme: Theme) => new CleanHeaderComponent(() => ctx.ui.theme ?? theme, () => ctx, pi);
+    const ui = ctx.ui;
+    const factory = (_tui: TUI, theme: Theme) => new CleanHeaderComponent(() => ui.theme ?? theme, () => ctx, pi);
     (factory as unknown as Record<symbol, unknown>)[OMT_HEADER_OWNER] = true;
     ctx.ui.setHeader(factory);
   }

@@ -9,7 +9,7 @@ import { createHeaderControl, OMT_HEADER_OWNER } from "../features/header/index.
 import { createSidebarControl } from "../features/sidebar/index.ts";
 import { FleetStore } from "../features/agent-fleet/store.ts";
 
-import { observeNativeUIOwnership, installNativeStartupPresentation, installNativeHeaderPresentation } from "../core/native-ui.ts";
+import { observeNativeUIOwnership, installNativeStartupPresentation, installNativeHeaderPresentation, installNativeSessionPresentation, installNativeSessionStatusPresentation } from "../core/native-ui.ts";
 import { THEME_NAMES, THEME_PRESETS, resolveThemeName } from "../presets/index.ts";
 import { getActiveTheme, resetActiveTheme, setActiveTheme } from "../core/theme.ts";
 import { configStore } from "../core/config.ts";
@@ -44,6 +44,8 @@ export default function omt(pi: ExtensionAPI) {
   let currentContext: ExtensionContext | undefined;
   let restoreStartup: (() => void) | undefined;
   let restoreHeader: (() => void) | undefined;
+  let restoreSessionStatus: (() => void) | undefined;
+  let sessionPaint: ReturnType<typeof installNativeSessionPresentation>;
   const messages = createUserMessageControl(() => {
     try {
       return currentContext?.ui?.theme;
@@ -177,6 +179,12 @@ export default function omt(pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     restoreStartup?.(); restoreStartup = undefined;
     restoreHeader?.(); restoreHeader = undefined;
+    restoreSessionStatus?.(); restoreSessionStatus = undefined;
+    sessionPaint?.dispose();
+    sessionPaint = installNativeSessionPresentation(ctx.ui, {
+      ownsTheme: () => hostTheme.isOwned(ctx),
+      refreshTheme: () => { refreshHostTheme(ctx, true); },
+    });
     layout.cleanup();
     background.cleanup(currentContext);
     hostTheme.cleanup(currentContext);
@@ -211,10 +219,17 @@ export default function omt(pi: ExtensionAPI) {
 
     const issues = activateComponents(ctx);
     header.on(ctx);
-    restoreStartup = installNativeStartupPresentation(ctx.ui, () => getActiveTheme().id === "omt-signature" && header.isEnabled()
-      && !!(ctx.ui as any).getHeaderComponent?.()?.[OMT_HEADER_OWNER]);
-    restoreHeader = installNativeHeaderPresentation(ctx.ui, () => getActiveTheme().id === "omt-signature" && header.isEnabled()
-      && !!(ctx.ui as any).getHeaderComponent?.()?.[OMT_HEADER_OWNER], { compact: true });
+    // Keep the host's getter detached from ExtensionContext: Pi invalidates the
+    // old context during /new while the owned native wrappers bridge sessions.
+    const headerUI = ctx.ui;
+    const getHeaderComponent = (headerUI as any).getHeaderComponent;
+    const ownsHeader = () => typeof getHeaderComponent === "function"
+      && !!getHeaderComponent.call(headerUI)?.[OMT_HEADER_OWNER];
+    restoreStartup = installNativeStartupPresentation(headerUI, () => getActiveTheme().id === "omt-signature" && header.isEnabled() && ownsHeader());
+    restoreHeader = installNativeHeaderPresentation(headerUI, () => getActiveTheme().id === "omt-signature" && header.isEnabled() && ownsHeader(), { compact: true });
+    restoreSessionStatus = installNativeSessionStatusPresentation(headerUI,
+      () => getActiveTheme().id === "omt-signature" && header.isEnabled() && ownsHeader(),
+      line => line.split("✓").map(text => headerUI.theme.fg("muted", text)).join(headerUI.theme.fg("success", "✓")));
     if (ctx.mode === "tui" && getActiveTheme().id !== "native" && issues.length) {
       ctx.ui.notify(withFallback(`OMT theme: ${getActiveTheme().id}.`, issues), "warning");
     }
@@ -229,30 +244,35 @@ export default function omt(pi: ExtensionAPI) {
     await refreshLayout(ctx);
   });
 
-  pi.on("session_shutdown", (_event, ctx) => {
+  pi.on("session_shutdown", (event, ctx) => {
+    if (event.reason === "new" && getActiveTheme().id !== "native") sessionPaint?.hold();
     toasts.cleanup();
     restoreStartup?.(); restoreStartup = undefined;
     restoreHeader?.(); restoreHeader = undefined;
+    restoreSessionStatus?.(); restoreSessionStatus = undefined;
     layout.cleanup();
     fleetDock = undefined;
     motionCoordinator.dispose();
     setActiveTui(undefined);
+    header.cleanup(ctx);
+    currentContext = undefined;
+    // Release every session-scoped resource normally. Only terminal painting is
+    // batched until Pi's native /new call finishes (or rejects).
+    sessionPaint?.dispose(); sessionPaint = undefined;
     editor.cleanup?.(ctx);
     messages.cleanup?.();
     tools.cleanup?.();
     footer.cleanup?.(ctx);
-    header.cleanup(ctx);
     thinking.cleanup(ctx);
     background.cleanup(ctx);
     sidebar.cleanup?.(ctx);
+    hostTheme.cleanup(ctx);
     fleet.reset();
     for (const unsubscribe of unsubscribeFleet) unsubscribe();
-    hostTheme.cleanup(ctx);
     restoreOwnership?.();
-    currentContext = undefined;
-    observedTurns.clear(); setTurnMetadataResolver(undefined);
     resetActiveTheme();
     resetLayoutMode();
+    observedTurns.clear(); setTurnMetadataResolver(undefined);
     accessibilityStore.reset();
     dialogs.reset();
     composerStash.clear();

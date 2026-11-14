@@ -195,6 +195,13 @@ export function observeNativeUIOwnership(onNotification?: (event: NativeNotifica
         || method?.name !== "showLoadedResources" || !method.toString().includes("this.loadedResourcesContainer.clear()")) return;
       return container;
     };
+    if (!("getNativeSessionHost" in ui)) ui.getNativeSessionHost = () => this;
+    if (!("getNativeChatContainer" in ui)) ui.getNativeChatContainer = () => {
+      const container = this.chatContainer;
+      if (!(container instanceof Container) || Object.getPrototypeOf(container) !== Container.prototype
+        || !(this.documentContainer instanceof Container) || this.documentContainer.children[2] !== container) return;
+      return container;
+    };
     if (!("getNativeHeaderContainer" in ui)) ui.getNativeHeaderContainer = () => {
       const container = this.headerContainer;
       const resources = this.loadedResourcesContainer;
@@ -301,10 +308,16 @@ export function installNativeViewportPresentation(
 /** Hide only native startup listings already summarized by Signature's welcome.
  * Native diagnostics, foreign rows, underlying children and mouse geometry remain intact.
  */
+const startupPresentationOwners = new WeakMap<Container, { dispose: () => void; owned: () => boolean }>();
+
 export function installNativeStartupPresentation(ui: ExtensionUIContext, enabled: () => boolean): (() => void) | undefined {
   const getter = (ui as ExtensionUIContext & { getNativeStartupResources?(): Container }).getNativeStartupResources;
   const candidate = getter?.call(ui);
-  if (!candidate || candidate.render !== Container.prototype.render || candidate.handleMouse !== Container.prototype.handleMouse) return;
+  if (!candidate) return;
+  const existing = startupPresentationOwners.get(candidate);
+  if (existing?.owned()) return existing.dispose;
+  if (existing) startupPresentationOwners.delete(candidate);
+  if (candidate.render !== Container.prototype.render || candidate.handleMouse !== Container.prototype.handleMouse) return;
   const container: Container = candidate;
   const render = container.render;
   const mouse = container.handleMouse;
@@ -347,11 +360,14 @@ export function installNativeStartupPresentation(ui: ExtensionUIContext, enabled
   }
   container.render = presentation;
   container.handleMouse = handleMouse;
-  return () => {
+  const dispose = () => {
     active = false; mapping = undefined;
+    if (startupPresentationOwners.get(container)?.dispose === dispose) startupPresentationOwners.delete(container);
     if (container.render === presentation) { if (hadRender) container.render = render; else delete (container as Partial<Container>).render; }
     if (container.handleMouse === handleMouse) { if (hadMouse) container.handleMouse = mouse; else delete (container as Partial<Container>).handleMouse; }
   };
+  startupPresentationOwners.set(container, { dispose, owned });
+  return dispose;
 }
 
 /**
@@ -359,11 +375,17 @@ export function installNativeStartupPresentation(ui: ExtensionUIContext, enabled
  * one-row session headers may also omit the exact trailing native Spacer1.
  * Diagnostics, multi-row welcome, children and native mouse geometry remain intact.
  */
+const headerPresentationOwners = new WeakMap<Container, { dispose: () => void; owned: () => boolean }>();
+
 export function installNativeHeaderPresentation(ui: ExtensionUIContext, enabled: () => boolean, options: { compact?: boolean } = {}): (() => void) | undefined {
   const getter = (ui as ExtensionUIContext & { getNativeHeaderContainer?(): Container }).getNativeHeaderContainer;
   if (typeof getter !== "function") return;
   const candidate = getter.call(ui);
-  if (!(candidate instanceof Container) || Object.getPrototypeOf(candidate) !== Container.prototype
+  if (!(candidate instanceof Container)) return;
+  const existing = headerPresentationOwners.get(candidate);
+  if (existing?.owned()) return existing.dispose;
+  if (existing) headerPresentationOwners.delete(candidate);
+  if (Object.getPrototypeOf(candidate) !== Container.prototype
     || candidate.render !== Container.prototype.render || candidate.handleMouse !== Container.prototype.handleMouse) return;
   const container: Container = candidate;
   const render = container.render;
@@ -415,10 +437,139 @@ export function installNativeHeaderPresentation(ui: ExtensionUIContext, enabled:
   }
   container.render = presentation;
   container.handleMouse = handleMouse;
-  return () => {
+  const dispose = () => {
     active = false; cropped = false;
+    if (headerPresentationOwners.get(container)?.dispose === dispose) headerPresentationOwners.delete(container);
     if (container.render === presentation) { if (hadRender) container.render = render; else delete (container as Partial<Container>).render; }
     if (container.handleMouse === handleMouse) { if (hadMouse) container.handleMouse = mouse; else delete (container as Partial<Container>).handleMouse; }
+  };
+  headerPresentationOwners.set(container, { dispose, owned });
+  return dispose;
+}
+
+/** Batch only painting during /new; Pi still tears down/rebinds every native component.
+ * The runtime call is always delegated unchanged, including cancellation and failures.
+ * No snapshots, stale contexts, sleeps, input interception or session mutations.
+ */
+type SessionPaintOwner = { ownsTheme(): boolean; refreshTheme(): void };
+type SessionPaintBinding = { hold(): void; dispose(): void };
+const sessionPaintOwners = new WeakMap<object, {
+  bind(owner: SessionPaintOwner): SessionPaintBinding;
+  owned(): boolean;
+}>();
+
+export function installNativeSessionPresentation(ui: ExtensionUIContext, owner: SessionPaintOwner): SessionPaintBinding | undefined {
+  const getter = (ui as ExtensionUIContext & { getNativeSessionHost?(): unknown }).getNativeSessionHost;
+  const host = getter?.call(ui) as {
+    runtimeHost?: { newSession: (...args: any[]) => Promise<any> };
+    renderer?: TUI & { doRender(): void };
+    themeController?: { applyFromSettings(): void };
+  } | undefined;
+  const runtime = host?.runtimeHost, tui = host?.renderer, controller = host?.themeController;
+  if (!runtime || !tui || !controller) return;
+  const existing = sessionPaintOwners.get(runtime);
+  if (existing?.owned()) return existing.bind(owner);
+  const create = runtime.newSession, paint = tui.doRender, apply = controller.applyFromSettings;
+  if (typeof create !== "function" || create.name !== "newSession"
+    || !create.toString().includes("this.teardownCurrent(\"new\"") || !create.toString().includes("this.finishSessionReplacement(")
+    || typeof paint !== "function" || paint.name !== "doRender" || !paint.toString().includes("this.terminal.")
+    || typeof apply !== "function" || apply.name !== "applyFromSettings" || !apply.toString().includes("this.applyThemeName(")) return;
+  const hadCreate = Object.hasOwn(runtime, "newSession"), hadPaint = Object.hasOwn(tui, "doRender"), hadApply = Object.hasOwn(controller, "applyFromSettings");
+  let current: SessionPaintOwner | undefined;
+  let running = 0, held = false, active = true;
+  const owned = () => active && runtime.newSession === newSession && tui.doRender === doRender && controller.applyFromSettings === applyFromSettings;
+  function restore() {
+    active = false;
+    if (sessionPaintOwners.get(runtime!) === entry) sessionPaintOwners.delete(runtime!);
+    if (runtime!.newSession === newSession) { if (hadCreate) runtime!.newSession = create; else delete (runtime as any).newSession; }
+    if (tui!.doRender === doRender) { if (hadPaint) tui!.doRender = paint; else delete (tui as any).doRender; }
+    if (controller!.applyFromSettings === applyFromSettings) { if (hadApply) controller!.applyFromSettings = apply; else delete (controller as any).applyFromSettings; }
+  }
+  async function newSession(this: typeof runtime, ...args: any[]) {
+    // A retained wrapper must be inert after cleanup or a foreign takeover.
+    if (!owned() || this !== runtime) return create.apply(this, args);
+    running++;
+    try { return await create.apply(this, args); }
+    finally {
+      running--; held = false;
+      if (!current && !running) restore();
+      try { tui!.requestRender(); } catch { /* Painting must not replace Pi's result/error. */ }
+    }
+  }
+  function doRender(this: typeof tui) {
+    // Blocking/foreign overlays are never hidden behind the transition gate.
+    if (owned() && this === tui && held && !tui!.hasOverlay()) return;
+    return paint.call(this);
+  }
+  function applyFromSettings(this: typeof controller) {
+    let refresh: SessionPaintOwner | undefined;
+    try { if (owned() && this === controller && held && current?.ownsTheme()) refresh = current; }
+    catch { /* An invalidated/foreign owner must not affect native theme application. */ }
+    const result = apply.call(this);
+    // Pi reapplies its saved theme AFTER session_start. Only reapply if OMT
+    // still owned the palette immediately before that native reset.
+    try { refresh?.refreshTheme(); } catch { /* Leave Pi's applied theme as the safe fallback. */ }
+    // This is the host's final rebind step. Resume before extension-provided
+    // withSession callbacks (which may wait for user input or run a model turn).
+    if (owned() && this === controller && held) {
+      held = false;
+      try { tui!.requestRender(); } catch { /* Native session replacement still completes. */ }
+    }
+    return result;
+  }
+  const entry = {
+    owned,
+    bind(next: SessionPaintOwner): SessionPaintBinding {
+      current = next;
+      return {
+        hold() { if (owned() && current === next && running) held = true; },
+        dispose() {
+          if (current !== next) return;
+          current = undefined;
+          if (!running) restore();
+        },
+      };
+    },
+  };
+  runtime.newSession = newSession;
+  tui.doRender = doRender;
+  controller.applyFromSettings = applyFromSettings;
+  sessionPaintOwners.set(runtime, entry);
+  return entry.bind(owner);
+}
+
+/** Restyle only Pi's exact /new status; never rewrite history, text or geometry. */
+export function installNativeSessionStatusPresentation(ui: ExtensionUIContext, enabled: () => boolean, style: (text: string) => string): (() => void) | undefined {
+  const getter = (ui as ExtensionUIContext & { getNativeChatContainer?(): Container }).getNativeChatContainer;
+  const container = getter?.call(ui);
+  if (!(container instanceof Container) || container.render !== Container.prototype.render) return;
+  const render = container.render, hadRender = Object.hasOwn(container, "render");
+  let active = true;
+  function presentation(width: number): string[] {
+    const lines = render.call(container, width);
+    if (!active || container!.render !== presentation || !enabled()) return lines;
+    const layout = (container as any).mouseLayout as { children?: Array<{ component: Component; height: number }> } | undefined;
+    if (!Array.isArray(layout?.children) || layout.children.length !== container!.children.length
+      || layout.children.some((entry, i) => entry.component !== container!.children[i] || !Number.isInteger(entry.height) || entry.height < 0)
+      || layout.children.reduce((sum, entry) => sum + entry.height, 0) !== lines.length) return lines;
+    const result = [...lines];
+    let offset = 0;
+    for (const { component, height } of layout.children) {
+      const child = component as Component & { build?: () => string };
+      const prototype = Object.getPrototypeOf(child);
+      if (prototype?.constructor?.name === "ThemedText" && child.render === prototype.render
+        && prototype.render?.toString().includes("this.setText(this.build())")
+        && typeof child.build === "function" && /\.fg\(["']accent["'],\s*["'](?:✓|\\u2713) New session started["']\)/.test(child.build.toString())) {
+        for (let i = offset; i < offset + height; i++) result[i] = style(stripTerminalSequences(lines[i]!));
+      }
+      offset += height;
+    }
+    return result;
+  }
+  container.render = presentation;
+  return () => {
+    active = false;
+    if (container.render === presentation) { if (hadRender) container.render = render; else delete (container as Partial<Container>).render; }
   };
 }
 

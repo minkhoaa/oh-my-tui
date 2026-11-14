@@ -115,11 +115,14 @@ test("Phase 1: missing, malformed, oversized, unsafe and corrupt managed assets 
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
 
-test("Phase 2: GIF and animated WebP decode once with bounded timed frames and loop metadata", async () => {
+test("Phase 2: GIF and animated WebP decode once with bounded timed frames and loop metadata", async (t) => {
   const dir = mkdtempSync(join(tmpdir(), "omt-animation-"));
   try {
     const store = new BackgroundAssetStore(join(dir, "agent"));
-    for (const extension of ["gif", "webp"]) {
+    const demuxers = spawnSync("ffmpeg", ["-hide_banner", "-demuxers"], { encoding: "utf8" });
+    const supportsAnimatedWebp = demuxers.status === 0 && /\bwebp_anim\b/.test(`${demuxers.stdout}\n${demuxers.stderr}`);
+    if (!supportsAnimatedWebp) t.diagnostic("Animated WebP decode assertion omitted: this FFmpeg build lacks the webp_anim demuxer.");
+    for (const extension of supportsAnimatedWebp ? ["gif", "webp"] : ["gif"]) {
       const path = join(dir, `animation.${extension}`);
       const result = spawnSync("ffmpeg", ["-v", "error", "-f", "lavfi", "-i", "testsrc=size=32x24:rate=5", "-t", "0.6", "-loop", "0", "-threads", "1", "-y", path]);
       assert.equal(result.status, 0, result.stderr.toString());

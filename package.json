@@ -4,6 +4,10 @@
   "description": "Modular UI enhancements for native Pi, preserving the original agent.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/minkhoaa/oh-my-tui.git"
+  },
   "keywords": [
     "pi-package",
     "pi-extension",
@@ -35,7 +39,8 @@
     "verify": "npm run typecheck && npm test",
     "test:package": "node --experimental-strip-types --test test/package.test.ts",
     "prepublishOnly": "npm run verify",
-    "pi:dev": "pi -e ./extensions/omt/index.ts"
+    "pi:dev": "pi -e ./extensions/omt/index.ts",
+    "capture": "node scripts/capture-screens.mjs"
   },
   "peerDependencies": {
     "@earendil-works/pi-ai": "*",

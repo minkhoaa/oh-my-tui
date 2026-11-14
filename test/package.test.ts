@@ -77,6 +77,7 @@ test("runtime external imports are declared and native Pi is host-provided", () 
     }
   }
   assert.equal(manifest.publishConfig.access, "public");
+  assert.deepEqual(manifest.repository, { type: "git", url: "git+https://github.com/minkhoaa/oh-my-tui.git" });
   assert.ok(manifest.keywords.includes("pi-package"));
   assert.equal(manifest.license, "MIT");
 });

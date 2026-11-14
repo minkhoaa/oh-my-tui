@@ -241,8 +241,12 @@ test("renderSidebar produces exact 34-column outer box (30 inner width) matching
     },
     tools: [
       { name: "read", status: "done" },
+      { name: "read", status: "done" },
+      { name: "read", status: "done" },
+      { name: "bash", status: "error" },
       { name: "bash", status: "error" },
       { name: "edit", status: "running" },
+      { name: "grep", status: "done" },
     ],
     workspace: {
       cwd: "/home/user/project",
@@ -321,9 +325,9 @@ test("renderSidebar produces exact 34-column outer box (30 inner width) matching
   assert.ok(fullText.includes("Tokens"), "Tokens header must be rendered");
   assert.ok(fullText.includes("RECENT MODELS"), "RECENT MODELS section must be rendered");
   assert.ok(fullText.includes("COMMANDS"), "COMMANDS section must be rendered");
-  assert.ok(fullText.includes("TOOLS"), "TOOLS section must be rendered");
-  assert.ok(fullText.includes("✓ read"), "Completed tool must show ✓");
-  assert.ok(fullText.includes("× bash"), "Failed tool must show ×");
+  assert.ok(fullText.includes("TOOLS (7)"), "Tools section summarizes the total call count");
+  assert.ok(fullText.includes("read ×3 · bash ×2 · +2 types"), "Tool calls are grouped by name instead of listed individually");
+  assert.ok(fullText.includes("◐ 1 running · × 2 failed"), "Running and failed calls remain visible in the summary");
   assert.ok(fullText.includes("WORKSPACE · main"), "WORKSPACE with branch must be rendered");
   assert.ok(fullText.includes("+42 -3"), "File diff numbers must be rendered");
 

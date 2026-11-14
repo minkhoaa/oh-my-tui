@@ -987,20 +987,29 @@ export function renderToolsSection(
   plainAscii = false,
 ): string[] {
   if (!tools || tools.length === 0) return [];
-  const rows: string[] = [sideTitleStyle(theme, "TOOLS")];
-  for (const t of tools) {
-    let mark = statusBarStyle(theme, "●");
-    let stateText = t.status;
-    if (t.status === "done") {
-      mark = okStyle(theme, "✓");
-    } else if (t.status === "error") {
-      mark = errStyle(theme, "×");
-    } else {
-      mark = statusBarStyle(theme, "●");
-      stateText = "running";
-    }
-    const toolLine = `${mark} ${statusBarStyle(theme, t.name)}${toolStyle(theme, " · " + stateText)}`;
-    rows.push(short(toolLine, inner));
+
+  const counts = new Map<string, number>();
+  let running = 0;
+  let failed = 0;
+  for (const tool of tools) {
+    counts.set(tool.name, (counts.get(tool.name) ?? 0) + 1);
+    if (tool.status === "running") running++;
+    else if (tool.status === "error") failed++;
+  }
+
+  const ranked = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  const shown = ranked.slice(0, 2).map(([name, count]) => `${name} ×${count}`);
+  if (ranked.length > shown.length) {
+    const remaining = ranked.length - shown.length;
+    shown.push(`+${remaining} ${remaining === 1 ? "type" : "types"}`);
+  }
+
+  const rows = [sideTitleStyle(theme, `TOOLS (${tools.length})`), toolStyle(theme, short(shown.join(" · "), inner))];
+  if (running || failed) {
+    const status: string[] = [];
+    if (running) status.push(statusBarStyle(theme, `◐ ${running} running`));
+    if (failed) status.push(errStyle(theme, `× ${failed} failed`));
+    rows.push(short(status.join(" · "), inner));
   }
   rows.push(sep(inner, plainAscii, theme));
   return rows;

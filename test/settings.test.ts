@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { test } from "node:test";
@@ -71,6 +71,58 @@ test("loadConfig and saveConfig persist to disk and handle missing directories g
     writeFileSync(join(tempDir, "omt.json"), "invalid json content {{{");
     const corrupted = loadConfig(tempDir);
     assert.deepEqual(corrupted, DEFAULT_CONFIG);
+  } finally {
+    rmSync(tempDir, { recursive: true, force: true });
+  }
+});
+
+test("loadConfig transparently migrates renamed preset IDs and per-preset preferences", () => {
+  const tempDir = mkdtempSync(join(tmpdir(), "omt-preset-migration-"));
+  const configPath = join(tempDir, "omt.json");
+  const renamed = [
+    ["codex-inspired", "omt-clean"], ["codex", "omt-clean"],
+    ["claude-code-inspired", "omt-ember"], ["claude", "omt-ember"],
+    ["opencode-inspired", "omt-rail"], ["opencode", "omt-rail"],
+  ] as const;
+  try {
+    writeFileSync(configPath, JSON.stringify({
+      preset: "claude-code-inspired",
+      background: {
+        presetScenes: {
+          "codex-inspired": "matrix",
+          "claude-code-inspired": "aurora",
+          "opencode-inspired": "rain",
+          "omt-rail": "snow-cabin",
+        },
+        presetAssets: {
+          "codex-inspired": null,
+          "claude-code-inspired": null,
+          "opencode-inspired": null,
+        },
+      },
+    }));
+
+    const migrated = loadConfig(tempDir);
+    assert.equal(migrated.preset, "omt-ember");
+    assert.equal(migrated.background.presetScenes?.["omt-clean"], "matrix");
+    assert.equal(migrated.background.presetScenes?.["omt-ember"], "aurora");
+    assert.equal(migrated.background.presetScenes?.["omt-rail"], "snow-cabin", "current keys take precedence over renamed keys");
+    assert.equal(migrated.background.presetAssets["omt-clean"], null);
+    assert.equal(migrated.background.presetAssets["omt-ember"], null);
+    assert.equal(migrated.background.presetAssets["omt-rail"], null);
+
+    const persisted = JSON.parse(readFileSync(configPath, "utf-8"));
+    assert.equal(persisted.preset, "omt-ember");
+    for (const [oldId, currentId] of renamed) {
+      assert.equal(validateConfig({ preset: oldId }).preset, DEFAULT_CONFIG.preset, "old IDs migrate only when loading saved config");
+      if (oldId.endsWith("-inspired")) {
+        assert.equal(Object.hasOwn(persisted.background.presetScenes, oldId), false);
+        assert.equal(Object.hasOwn(persisted.background.presetAssets, oldId), false);
+      }
+      writeFileSync(configPath, JSON.stringify({ preset: oldId }));
+      assert.equal(loadConfig(tempDir).preset, currentId);
+    }
+    assert.equal(persisted.background.presetScenes["omt-rail"], "snow-cabin");
   } finally {
     rmSync(tempDir, { recursive: true, force: true });
   }

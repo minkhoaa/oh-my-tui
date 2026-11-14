@@ -340,9 +340,61 @@ export function cloneConfig(cfg: OmtConfig): OmtConfig {
   };
 }
 
+const LEGACY_PRESET_ID_MIGRATIONS: Readonly<Record<string, ThemeName>> = {
+  "codex-inspired": "omt-clean",
+  codex: "omt-clean",
+  "claude-code-inspired": "omt-ember",
+  claude: "omt-ember",
+  "opencode-inspired": "omt-rail",
+  opencode: "omt-rail",
+};
+
+/** Migrate persisted identifiers only; command and runtime resolution reject these old IDs. */
+function migrateLegacyPresetIds(raw: unknown): { value: unknown; changed: boolean } {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return { value: raw, changed: false };
+
+  const config = { ...(raw as Record<string, unknown>) };
+  let changed = false;
+  if (typeof config.preset === "string") {
+    const replacement = LEGACY_PRESET_ID_MIGRATIONS[config.preset];
+    if (replacement) {
+      config.preset = replacement;
+      changed = true;
+    }
+  }
+
+  const rawBackground = config.background;
+  if (rawBackground && typeof rawBackground === "object" && !Array.isArray(rawBackground)) {
+    const background = { ...(rawBackground as Record<string, unknown>) };
+    let backgroundChanged = false;
+    for (const field of ["presetScenes", "presetAssets"] as const) {
+      const rawAssignments = background[field];
+      if (!rawAssignments || typeof rawAssignments !== "object" || Array.isArray(rawAssignments)) continue;
+      const assignments = { ...(rawAssignments as Record<string, unknown>) };
+      let assignmentsChanged = false;
+      for (const [legacyId, currentId] of Object.entries(LEGACY_PRESET_ID_MIGRATIONS)) {
+        if (!Object.hasOwn(assignments, legacyId)) continue;
+        if (!Object.hasOwn(assignments, currentId)) assignments[currentId] = assignments[legacyId];
+        delete assignments[legacyId];
+        assignmentsChanged = true;
+      }
+      if (assignmentsChanged) {
+        background[field] = assignments;
+        backgroundChanged = true;
+      }
+    }
+    if (backgroundChanged) {
+      config.background = background;
+      changed = true;
+    }
+  }
+
+  return { value: changed ? config : raw, changed };
+}
+
 /**
- * Loads persistent preferences from omt.json, falling back gracefully
- * to DEFAULT_CONFIG on missing file, read failure, or parse error.
+ * Loads persistent preferences from omt.json, migrating renamed preset IDs once
+ * and falling back gracefully on missing files, read failures, or parse errors.
  */
 export function loadConfig(agentDir?: string): OmtConfig {
   const filePath = getConfigPath(agentDir);
@@ -350,7 +402,10 @@ export function loadConfig(agentDir?: string): OmtConfig {
     if (existsSync(filePath)) {
       const content = readFileSync(filePath, "utf-8");
       const parsed = JSON.parse(content);
-      return validateConfig(parsed);
+      const migration = migrateLegacyPresetIds(parsed);
+      const config = validateConfig(migration.value);
+      if (migration.changed) saveConfig(config, agentDir);
+      return config;
     }
   } catch {
     // Safe fallback to defaults on any I/O or JSON parse error

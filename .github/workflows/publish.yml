@@ -1,0 +1,42 @@
+name: Publish to npm
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      TERM: xterm-256color
+      COLORTERM: truecolor
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Install npm with trusted publishing support
+        run: npm install --global npm@^11.5.1
+      - name: Check tag matches package version
+        run: test "v$(node -p 'require("./package.json").version')" = "$GITHUB_REF_NAME"
+      - name: Install media test dependency
+        run: sudo apt-get update && sudo apt-get install --yes ffmpeg
+      - run: npm ci --ignore-scripts
+      - run: npm run verify
+      - run: npm pack --dry-run
+      - name: Publish with npm trusted publishing
+        run: npm publish --access public

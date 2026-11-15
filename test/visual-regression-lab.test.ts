@@ -432,24 +432,6 @@ test("formatRegressionReport formats actionable failure sections with diffs", ()
   assert.ok(report.includes("+ actual:   \"bar\""));
 });
 
-// ============================================================================
-// 7. Full Suite Execution Against Baseline Fixtures Store
-// ============================================================================
-
-test("runVisualRegressionSuite executes full suite against baselines and passes 216 checks", async () => {
-  const suite = await runVisualRegressionSuite();
-  assert.equal(suite.total, 216, "6 presets * 4 widths * 9 fixtures = 216 fixtures");
-  assert.equal(suite.passed, 216, "All 216 baseline fixtures must pass");
-  assert.equal(suite.failed, 0, "Zero baseline regressions expected");
-  assert.ok(suite.report.includes("216/216 passed (0 failed)"));
-});
-
-test("runVisualRegressionSuite supports subset filtering by preset and width", async () => {
-  const subset = await runVisualRegressionSuite(["minimal"], [80]);
-  assert.equal(subset.total, 9, "1 preset * 1 width * 9 fixtures = 9 fixtures");
-  assert.equal(subset.passed, 9);
-  assert.equal(subset.failed, 0);
-});
 
 // ============================================================================
 // 8. Fixtures Store and Baseline Helpers

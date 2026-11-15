@@ -1,10 +1,12 @@
 import { signaturePreset } from "./omt-signature/preset.ts";
+import { obsidianPreset } from "./omt-obsidian/preset.ts";
 import { cleanPreset } from "./omt-clean/preset.ts";
 import { emberPreset } from "./omt-ember/preset.ts";
 import { railPreset } from "./omt-rail/preset.ts";
 import { minimalPreset } from "./minimal/preset.ts";
 import { nativePreset } from "./native/preset.ts";
 import { signatureBackgroundPalette, SIGNATURE_BACKGROUND_DEFAULTS } from "./omt-signature/background.ts";
+import { obsidianBackgroundPalette, OBSIDIAN_BACKGROUND_DEFAULTS } from "./omt-obsidian/background.ts";
 import { cleanBackgroundPalette, CLEAN_BACKGROUND_DEFAULTS } from "./omt-clean/background.ts";
 import { emberBackgroundPalette, EMBER_BACKGROUND_DEFAULTS } from "./omt-ember/background.ts";
 import { railBackgroundPalette, RAIL_BACKGROUND_DEFAULTS } from "./omt-rail/background.ts";
@@ -16,18 +18,21 @@ import type { ThemeName, ThemePreset } from "./shared/types.ts";
 export type { ThemeName, ThemePreset } from "./shared/types.ts";
 export {
   signaturePreset,
+  obsidianPreset,
   cleanPreset,
   emberPreset,
   railPreset,
   minimalPreset,
   nativePreset,
   signatureBackgroundPalette,
+  obsidianBackgroundPalette,
   cleanBackgroundPalette,
   emberBackgroundPalette,
   railBackgroundPalette,
   minimalBackgroundPalette,
   nativeBackgroundPalette,
   SIGNATURE_BACKGROUND_DEFAULTS,
+  OBSIDIAN_BACKGROUND_DEFAULTS,
   CLEAN_BACKGROUND_DEFAULTS,
   EMBER_BACKGROUND_DEFAULTS,
   RAIL_BACKGROUND_DEFAULTS,
@@ -36,6 +41,7 @@ export {
 };
 export const THEME_NAMES: readonly ThemeName[] = [
   "omt-signature",
+  "omt-obsidian",
   "omt-clean",
   "omt-ember",
   "omt-rail",
@@ -45,6 +51,7 @@ export const THEME_NAMES: readonly ThemeName[] = [
 export const THEME_ALIASES: Readonly<Record<string, ThemeName>> = {
   omt: "omt-signature",
   signature: "omt-signature",
+  obsidian: "omt-obsidian",
   clean: "omt-clean",
   ember: "omt-ember",
   rail: "omt-rail",
@@ -53,6 +60,7 @@ export const THEME_PRESETS: Readonly<
   Record<ThemeName, ThemePreset> & {
     omt: ThemePreset;
     signature: ThemePreset;
+    obsidian: ThemePreset;
     clean: ThemePreset;
     ember: ThemePreset;
     rail: ThemePreset;
@@ -61,6 +69,8 @@ export const THEME_PRESETS: Readonly<
   "omt-signature": signaturePreset,
   omt: signaturePreset,
   signature: signaturePreset,
+  "omt-obsidian": obsidianPreset,
+  obsidian: obsidianPreset,
   "omt-clean": cleanPreset,
   clean: cleanPreset,
   "omt-ember": emberPreset,
@@ -73,6 +83,7 @@ export const THEME_PRESETS: Readonly<
 
 export const PRESET_BACKGROUND_PALETTES: Readonly<Record<ThemeName, PresetBackgroundPalette>> = Object.freeze({
   "omt-signature": signatureBackgroundPalette,
+  "omt-obsidian": obsidianBackgroundPalette,
   "omt-clean": cleanBackgroundPalette,
   "omt-ember": emberBackgroundPalette,
   "omt-rail": railBackgroundPalette,
@@ -93,6 +104,8 @@ export function getPresetBackgroundDefaults(name: string) {
   switch (resolved) {
     case "omt-signature":
       return SIGNATURE_BACKGROUND_DEFAULTS;
+    case "omt-obsidian":
+      return OBSIDIAN_BACKGROUND_DEFAULTS;
     case "omt-clean":
       return CLEAN_BACKGROUND_DEFAULTS;
     case "omt-ember":

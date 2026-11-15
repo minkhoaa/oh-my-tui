@@ -1,6 +1,6 @@
 {
   "name": "oh-my-tui",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Modular UI enhancements for native Pi, preserving the original agent.",
   "type": "module",
   "license": "MIT",

@@ -27,6 +27,7 @@ export interface ActivityState {
 import { formatFooterLine, sanitizeStatusText, type FooterRenderData } from "../../presets/shared/footer.ts";
 import { getActiveLayoutMode, shouldDisplayFooterActivity, shouldDisplayFooterBranch } from "../adaptive-layout/index.ts";
 export { formatFooterLine, sanitizeStatusText, formatTokens, type FooterRenderData } from "../../presets/shared/footer.ts";
+export { renderGaugeBar, resolveGaugeColor } from "../../core/theme-tokens.ts";
 /** Format concise activity detail (command preview or shortened path). */
 export function formatActivityDetail(toolName: string, rawArgs: unknown, cwd: string): string | undefined {
   if (!rawArgs || typeof rawArgs !== "object") return undefined;

@@ -2,8 +2,9 @@
 import type { AssistantMessageComponent, Theme } from "@earendil-works/pi-coding-agent";
 import { Text, stripTerminalSequences, type MarkdownTheme, type TuiMouseEvent } from "@earendil-works/pi-tui";
 import { getActiveTheme } from "../../core/theme.ts";
-import { isCleanTheme, isRailTheme, isEmberTheme, isSignatureTheme, contentPadding } from "./style.ts";
+import { isCleanTheme, isRailTheme, isEmberTheme, isSignatureTheme, isObsidianTheme, contentPadding } from "./style.ts";
 import { signatureAssistant, startsPreformatted, type SignatureAssistantBlock } from "../omt-signature/assistant.ts";
+import { obsidianAssistant } from "../omt-obsidian/assistant.ts";
 import { signatureThinkingLabel } from "../omt-signature/message-model.ts";
 import { signatureFg } from "../omt-signature/rendering.ts";
 import { cleanAssistant } from "../omt-clean/assistant.ts";
@@ -43,22 +44,23 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
   function omtAssistantRender(this: AssistantMessageComponent, width: number): string[] {
     const isEnabled = enabled();
     const activeTheme = getActiveTheme();
+    const obsidian = isEnabled && width >= 10 && isObsidianTheme(activeTheme);
     const signature = isEnabled && width >= 10 && isSignatureTheme(activeTheme);
     const clean = isEnabled && width >= 10 && isCleanTheme(activeTheme);
     const rail = isEnabled && width >= 10 && isRailTheme(activeTheme);
     const ember = isEnabled && width >= 10 && isEmberTheme(activeTheme);
-    const presentation = signature ? "signature" : clean ? "clean" : rail ? "rail" : ember ? "ember" : "native";
+    const presentation = obsidian ? "obsidian" : signature ? "signature" : clean ? "clean" : rail ? "rail" : ember ? "ember" : "native";
     const host = this as unknown as AssistantHost & { contentContainer?: { children?: Child[] } };
     const children = host.contentContainer?.children;
     mouseLayouts.delete(this);
-    if (!Array.isArray(children) || (signature && (!Array.isArray(this.children) || this.children.length !== 1 || this.children[0] !== host.contentContainer))) return original.call(this, width);
+    if (!Array.isArray(children) || ((signature || obsidian) && (!Array.isArray(this.children) || this.children.length !== 1 || this.children[0] !== host.contentContainer))) return original.call(this, width);
     const changed: Array<[Child, number]> = [];
     const themes: Array<[Child, MarkdownTheme]> = [];
     const texts: Array<[Child, string]> = [];
     const renders: Array<{ child: Child; render: Child["render"]; own: boolean }> = [];
     const runByChild = new Map<Child, number>();
     const expanded = expandedThinking.get(this) ?? new Set<number>();
-    if (signature) expandedThinking.set(this, expanded);
+    if (signature || obsidian) expandedThinking.set(this, expanded);
     const blockKinds = new Map<Child, Omit<SignatureAssistantBlock, "start" | "end">>();
     const thinkingRuns = extractThinkingRuns(host.lastMessage);
     let thinkingRunIdx = 0;
@@ -82,8 +84,8 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       }
       // Keep one cell of Signature inset before the two-cell gutter. Set native
       // padding before wrapping, including thinking Text, and restore it afterwards.
-      const next = (signature || clean || rail || ember) && typeof child.paddingX === "number"
-        ? (signature ? 1 : Math.min(contentPadding(child.paddingX), Math.floor((width - 2) / 2))) : child.paddingX;
+      const next = (signature || obsidian || clean || rail || ember) && typeof child.paddingX === "number"
+        ? ((signature || obsidian) ? 1 : Math.min(contentPadding(child.paddingX), Math.floor((width - 2) / 2))) : child.paddingX;
       if (signature && ownsThinking && typeof child.render === "function") {
         // Pi's default expanded Markdown is not the reference default. Present raw
         // thinking as a 160-cell preview, independently of native hide/show flags.
@@ -97,7 +99,7 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
         child.render = w => view.render(w);
         runByChild.set(outer, run!);
       }
-      if (signature) blockKinds.set(outer, {
+      if (signature || obsidian) blockKinds.set(outer, {
         kind: isExpandedThinking || ownsThinkingLabel ? "thinking" : !outer.child && child.theme ? "text" : "native",
         padding: typeof next === "number" ? next : 0,
         hasGutter: ownsThinking && !expanded.has(run!),
@@ -111,7 +113,7 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       // Normal working ticks reuse Pi's Markdown cache; only presentation transitions invalidate.
       if (previous?.presentation !== presentation || previous?.padding !== next) child.invalidate();
       layouts.set(child, { presentation, padding: next });
-      if ((signature || clean || rail || ember) && child.theme && typeof child.theme.codeBlockBorder === "function") {
+      if ((signature || obsidian || clean || rail || ember) && child.theme && typeof child.theme.codeBlockBorder === "function") {
         const native = child.theme;
         let styled = markdownThemes.get(native);
         if (!styled) {
@@ -126,8 +128,8 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
       }
     }
       // Signature adds a two-cell gutter; reserve it before native Markdown wraps.
-      const lines = original.call(this, signature ? width - 2 : width);
-      if (signature) {
+      const lines = original.call(this, (signature || obsidian) ? width - 2 : width);
+      if (signature || obsidian) {
         const blocks: SignatureAssistantBlock[] = [];
         const rowRuns: Array<number | undefined> = [];
         let offset = 0;
@@ -155,12 +157,15 @@ export function createAssistantPresentation(enabled: () => boolean, palette: () 
         }
         const theme = palette();
         if (!theme) return lines;
-        const decorated = signatureAssistant(lines, host, theme, width, { blocks });
+        const decorated = obsidian
+          ? obsidianAssistant(lines, host, theme, width, { blocks })
+          : signatureAssistant(lines, host, theme, width, { blocks });
         mouseLayouts.set(this, { width, rows, thinkingRuns: rowRuns });
         return decorated;
       }
       const theme = palette();
       if (!theme) return lines;
+      if (obsidian) return obsidianAssistant(lines, host, theme, width);
       if (rail) return railAssistant(lines, host, theme, width);
       if (clean) return cleanAssistant(lines, host, theme, width);
       if (ember) {

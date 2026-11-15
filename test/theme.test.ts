@@ -24,9 +24,10 @@ test("all theme presets exist with distinct semantic tokens and omt-signature as
   resetActiveTheme();
   assert.equal(getActiveTheme().id, "omt-signature");
   assert.equal(getActiveTheme().label, "OMT Signature");
-  assert.deepEqual(THEME_NAMES, ["omt-signature", "omt-clean", "omt-ember", "omt-rail", "minimal", "native"]);
+  assert.deepEqual(THEME_NAMES, ["omt-signature", "omt-obsidian", "omt-clean", "omt-ember", "omt-rail", "minimal", "native"]);
   assert.equal(THEME_PRESETS.omt, THEME_PRESETS["omt-signature"]);
   assert.equal(THEME_PRESETS.signature, THEME_PRESETS["omt-signature"]);
+  assert.equal(THEME_PRESETS.obsidian, THEME_PRESETS["omt-obsidian"]);
   assert.equal(THEME_PRESETS.rail, THEME_PRESETS["omt-rail"]);
   assert.equal(THEME_PRESETS.clean, THEME_PRESETS["omt-clean"], "backward-compatible alias resolves to omt-clean");
 

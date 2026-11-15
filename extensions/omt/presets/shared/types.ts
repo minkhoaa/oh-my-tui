@@ -1,6 +1,31 @@
 import type { ThemeBg, ThemeColor } from "@earendil-works/pi-coding-agent";
+import type {
+  RailGlyphsContract,
+  BadgeStylesContract,
+  GaugeTokensContract,
+  ReasoningTokensContract,
+  ObsidianBrandContract,
+  RailGlyphSet,
+  RailState,
+  RailGlyphVariant,
+  BadgeVariant,
+  DegradationLevel,
+} from "../../core/theme-tokens.ts";
 
-export type ThemeName = "omt-signature" | "omt-clean" | "omt-ember" | "omt-rail" | "minimal" | "native";
+export type {
+  RailGlyphsContract,
+  BadgeStylesContract,
+  GaugeTokensContract,
+  ReasoningTokensContract,
+  ObsidianBrandContract,
+  RailGlyphSet,
+  RailState,
+  RailGlyphVariant,
+  BadgeVariant,
+  DegradationLevel,
+};
+
+export type ThemeName = "omt-signature" | "omt-obsidian" | "omt-clean" | "omt-ember" | "omt-rail" | "minimal" | "native";
 export interface ThemePreset {
   readonly id: ThemeName;
   readonly label: string;
@@ -37,6 +62,11 @@ export interface ThemePreset {
     readonly frame: "blank" | "line" | "native";
   };
   readonly panelBg: boolean;
+  readonly tokens?: {
+    readonly rail?: RailGlyphSet;
+    readonly badge?: BadgeVariant;
+    readonly brand?: ObsidianBrandContract;
+  };
 }
 
 

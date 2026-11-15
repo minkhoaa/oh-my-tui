@@ -136,6 +136,7 @@ Switch with `/omt theme <name>`. Short aliases such as `clean`, `ember`, and `ra
 | Preset | Style |
 | :--- | :--- |
 | `omt-signature` | Default OMT presentation with a framed composer, dashboard dock, and companion. |
+| `omt-obsidian` | Obsidian Studio cockpit with left-rail architecture, solid chips, and fuel gauge telemetry. |
 | `omt-clean` | Clean, restrained styling. |
 | `omt-ember` | Warm, retro-inspired colors. |
 | `omt-rail` | Gutter rails and structured visual accents. |

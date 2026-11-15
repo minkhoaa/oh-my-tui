@@ -5,10 +5,17 @@ import { createCleanReadRenderer, createCleanWriteRenderer, createCleanEditRende
 import { ToolGroups, isGroupableTool } from "./groups.ts";
 import { createGroupedToolRenderer } from "./group-renderer.ts";
 export * from "../../presets/shared/tools.ts";
+
+export interface ToolsControlOptions {
+  groupingEnabled?: boolean;
+}
+
 export interface ToolsControl {
   on(): string;
   off(): string;
   isEnabled(): boolean;
+  setGroupingEnabled?(enabled: boolean): void;
+  isGroupingEnabled?(): boolean;
   applyTheme?(): void;
   cleanup?(): void;
   syncSession?(ctx: ExtensionContext): void;
@@ -16,7 +23,7 @@ export interface ToolsControl {
   registerCustomTool?(name: string, options?: CustomToolRendererOptions | ToolRenderers): void;
 }
 
-export function createToolsControl(pi: ExtensionAPI): ToolsControl {
+export function createToolsControl(pi: ExtensionAPI, options?: ToolsControlOptions): ToolsControl {
   if (typeof pi.registerToolRenderer !== "function") {
     const unavailable = () => "OMT tools unavailable: native registerToolRenderer API required.";
     return { on: unavailable, off: unavailable, isEnabled: () => false };
@@ -24,10 +31,11 @@ export function createToolsControl(pi: ExtensionAPI): ToolsControl {
   let enabled = true;
   let expanded = () => false;
   let canGroup = false;
+  let groupingEnabled = options?.groupingEnabled ?? true;
   const groups = new ToolGroups(() => expanded());
   const isNative = nativeToolRenderers();
   const customRenderers = new Map<string, ToolRenderers>();
-  const renderers: Record<string, ToolRenderers> = {
+  const individualRenderers: Record<string, ToolRenderers> = {
     read: createCleanReadRenderer(),
     write: createCleanWriteRenderer(),
     edit: createCleanEditRenderer(),
@@ -37,16 +45,24 @@ export function createToolsControl(pi: ExtensionAPI): ToolsControl {
     find: createCleanFindRenderer(),
     ls: createCleanLsRenderer(),
   };
-  for (const [name, renderer] of Object.entries(renderers)) {
-    if (isGroupableTool(name)) renderers[name] = createGroupedToolRenderer(name, renderer, groups);
-    (renderers[name] as Record<symbol, unknown>)[OMT_TOOL_OWNER] = true;
+  for (const renderer of Object.values(individualRenderers)) {
+    (renderer as Record<symbol, unknown>)[OMT_TOOL_OWNER] = true;
+  }
+
+  const groupedRenderers: Record<string, ToolRenderers> = {};
+  for (const [name, renderer] of Object.entries(individualRenderers)) {
+    groupedRenderers[name] = isGroupableTool(name)
+      ? createGroupedToolRenderer(name, renderer, groups)
+      : renderer;
+    (groupedRenderers[name] as Record<symbol, unknown>)[OMT_TOOL_OWNER] = true;
   }
 
   pi.registerToolRenderer((name, next) => {
     const downstream = next();
     const active = getActiveTheme();
     if (!enabled || active.id === "native") return downstream;
-    if (renderers[name] && isNative(name, downstream)) return renderers[name];
+    const activeRenderers = (groupingEnabled && active.id !== "omt-obsidian") ? groupedRenderers : individualRenderers;
+    if (activeRenderers[name] && isNative(name, downstream)) return activeRenderers[name];
     if (customRenderers.has(name) && (!downstream || isNative(name, downstream))) {
       return customRenderers.get(name)!;
     }
@@ -65,9 +81,14 @@ export function createToolsControl(pi: ExtensionAPI): ToolsControl {
     },
     off() { enabled = false; return "OMT tools off (native rendering)."; },
     isEnabled: () => enabled,
+    setGroupingEnabled(val: boolean) {
+      groupingEnabled = Boolean(val);
+    },
+    isGroupingEnabled: () => groupingEnabled,
     applyTheme() { /* dynamic via getActiveTheme() */ },
     cleanup() {
       enabled = false;
+      groupingEnabled = false;
       groups.reset(); expanded = () => false; canGroup = false;
       customRenderers.clear();
     },

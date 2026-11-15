@@ -241,6 +241,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   const themeCompletions = await omtCmd.getArgumentCompletions!("theme");
   assert.deepEqual(themeCompletions, [
     { value: "theme omt-signature", label: "theme omt-signature" },
+    { value: "theme omt-obsidian", label: "theme omt-obsidian" },
     { value: "theme omt-clean", label: "theme omt-clean" },
     { value: "theme omt-ember", label: "theme omt-ember" },
     { value: "theme omt-rail", label: "theme omt-rail" },
@@ -255,7 +256,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
     await session.prompt("/omt preset"); // Explicit status query remains supported.
   };
   await readThemeStatus();
-  const defaultThemeStatus = "OMT theme: omt-signature. Available: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native";
+  const defaultThemeStatus = "OMT theme: omt-signature. Available: omt-signature, omt-obsidian, omt-clean, omt-ember, omt-rail, minimal, native";
   assert.deepEqual(notifications.at(-1), [defaultThemeStatus, "info"]);
 
   await session.prompt("/omt theme omt");
@@ -316,7 +317,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
     const currentEditor: Factory = editor;
     const currentFooter: FooterFactory = footer;
     await session.prompt(`/omt theme ${name}`);
-    assert.deepEqual(notifications.at(-1), [`Unknown theme: ${name}. Available themes: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native`, "info"]);
+    assert.deepEqual(notifications.at(-1), [`Unknown theme: ${name}. Available themes: omt-signature, omt-obsidian, omt-clean, omt-ember, omt-rail, minimal, native`, "info"]);
     assert.equal(editor, currentEditor);
     assert.equal(footer, currentFooter);
     assert.deepEqual(render(), signatureMessage);
@@ -326,7 +327,7 @@ test("native Pi discovers OMT, runs /omt, reloads, and unloads without agent cha
   await session.prompt("/omt theme minimal");
   await session.reload();
   await readThemeStatus();
-  assert.deepEqual(notifications.at(-1), ["OMT theme: minimal. Available: omt-signature, omt-clean, omt-ember, omt-rail, minimal, native", "info"]);
+  assert.deepEqual(notifications.at(-1), ["OMT theme: minimal. Available: omt-signature, omt-obsidian, omt-clean, omt-ember, omt-rail, minimal, native", "info"]);
   assert.equal(hiddenThinkingLabel, "Thinking");
   assert.deepEqual(workingIndicator, { frames: ["·"] });
   await session.prompt("/omt theme omt-signature");

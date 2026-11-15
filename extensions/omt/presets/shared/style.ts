@@ -17,6 +17,10 @@ export function isRailTheme(preset: ThemePreset = getActiveTheme()): boolean {
   return preset.id === "omt-rail";
 }
 
+export function isObsidianTheme(preset: ThemePreset = getActiveTheme()): boolean {
+  return preset.id === "omt-obsidian" || (preset.id as string) === "obsidian";
+}
+
 export function isSignatureTheme(preset: ThemePreset = getActiveTheme()): boolean {
   return preset.id === "omt-signature" || (preset.id as string) === "signature" || (preset.id as string) === "omt";
 }

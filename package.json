@@ -1,6 +1,6 @@
 {
   "name": "oh-my-tui",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Modular UI enhancements for native Pi, preserving the original agent.",
   "type": "module",
   "license": "MIT",
@@ -30,7 +30,8 @@
   "pi": {
     "extensions": [
       "./extensions/omt/index.ts"
-    ]
+    ],
+    "image": "https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/01-hero-signature.png"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -48,7 +49,9 @@
     "@earendil-works/pi-tui": "*"
   },
   "peerDependenciesMeta": {
-    "@earendil-works/pi-ai": { "optional": true },
+    "@earendil-works/pi-ai": {
+      "optional": true
+    },
     "@earendil-works/pi-coding-agent": {
       "optional": true
     },

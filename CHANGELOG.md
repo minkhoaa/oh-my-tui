@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.1.1] - 2026-11-15
+
+- Fix showcase image and GIF URLs in README for npm and Pi Marketplace gallery.
+- Add `pi.image` gallery preview thumbnail.
+
 ## [0.1.0] - 2026-11-10
 
 - Five presentation presets: OMT Clean, OMT Ember, OMT Rail, Minimal and Native.

@@ -19,7 +19,7 @@
   <a href="#contributing">Contribute</a>
 </p>
 
-![Oh My TUI Signature interface with a framed composer, session dashboard, and animated companion](media/01-hero-signature.png)
+![Oh My TUI Signature interface with a framed composer, session dashboard, and animated companion](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/01-hero-signature.png)
 
 **Oh My TUI (OMT)** is a presentation-focused extension for [Pi](https://pi.dev). It brings visual presets, a session dashboard, richer tool output, and interactive navigation to your terminal—without replacing Pi's agent runtime.
 
@@ -102,12 +102,12 @@ Open `/omt settings` to browse configuration and installed resources. The Theme 
 
 | Settings hub | Themes and surfaces |
 | :---: | :---: |
-| ![Settings hub showing sections, plugins, and details](media/02-settings-hub.png) | ![Theme settings with color palette and surface choices](media/03-settings-palettes.png) |
+| ![Settings hub showing sections, plugins, and details](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/02-settings-hub.png) | ![Theme settings with color palette and surface choices](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/03-settings-palettes.png) |
 
 <details>
 <summary>Watch live palette browsing</summary>
 
-![Browsing color palettes with live interface previews](media/omt-palette-browsing.gif)
+![Browsing color palettes with live interface previews](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/omt-palette-browsing.gif)
 
 </details>
 
@@ -119,7 +119,7 @@ Choose a companion with `/omt pet`, or press `p` in the dashboard to cycle pets.
 
 | Session dashboard | Companion animation |
 | :---: | :---: |
-| ![Dashboard with session details, token metrics, and workspace information](media/04-sidebar-dashboard.png) | ![Cycling animated companions in the dashboard](media/omt-pet-animation.gif) |
+| ![Dashboard with session details, token metrics, and workspace information](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/04-sidebar-dashboard.png) | ![Cycling animated companions in the dashboard](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/omt-pet-animation.gif) |
 
 ### Command palette and Git explorer
 
@@ -127,7 +127,7 @@ Use `/omt palette` to search OMT actions. Open `/omt git` to inspect working tre
 
 | Command palette | Git explorer |
 | :---: | :---: |
-| ![Searchable command palette with OMT actions](media/05-command-palette.png) | ![Git explorer showing changed files and a unified diff](media/06-git-explorer.png) |
+| ![Searchable command palette with OMT actions](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/05-command-palette.png) | ![Git explorer showing changed files and a unified diff](https://raw.githubusercontent.com/minkhoaa/oh-my-tui/master/media/06-git-explorer.png) |
 
 ## Presets
 

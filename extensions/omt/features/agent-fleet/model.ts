@@ -38,13 +38,14 @@ export function projectFleetRows(children: readonly FleetChild[], now = Date.now
       observedAt: child.observedAt,
     });
   }
-  // Sort: running first, then stopping, then stopped; within same status by observedAt desc
+  // Sort: running first, then stopping, then stopped; within same status by observedAt desc, then stable id
   const rank = { running: 0, stopping: 1, stopped: 2 } as const;
   rows.sort((a, b) => {
     const ra = rank[a.status] ?? 2;
     const rb = rank[b.status] ?? 2;
     if (ra !== rb) return ra - rb;
-    return b.observedAt - a.observedAt;
+    if (b.observedAt !== a.observedAt) return b.observedAt - a.observedAt;
+    return a.id.localeCompare(b.id);
   });
   return rows;
 }

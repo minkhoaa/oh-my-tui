@@ -74,7 +74,8 @@ function createTestState(): SidebarState {
 
 test("SidebarDock switches between Overview and live Fleet, selects agents, and inspects without closing", () => {
   const tui = { requestRender() {}, terminal: { rows: 18, columns: 120 } } as any;
-  const children = Array.from({ length: 24 }, (_, index) => ({ id: `worker-${index}`, runId: "run-1", agent: "reviewer", label: `Review ${index}`, status: "running" as const, observedAt: Date.now() }));
+  const baseTime = 1700000000000;
+  const children = Array.from({ length: 24 }, (_, index) => ({ id: `worker-${index}`, runId: "run-1", agent: "reviewer", label: `Review ${index}`, status: "running" as const, observedAt: baseTime - index }));
   const dock = createSidebarDockComponent(tui, mockTheme, undefined, { mode: "tui", hasUI: true } as any, {
     state: createTestState(), getFleetChildren: () => children,
   });
